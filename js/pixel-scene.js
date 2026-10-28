@@ -3,7 +3,7 @@
   const canvas = document.getElementById("activityCanvas");
   const context = canvas.getContext("2d");
   context.imageSmoothingEnabled = false;
-  context.scale(2, 2);
+  context.scale(3, 3);
 
   const palette = {
     ink: "#182232",
@@ -39,56 +39,56 @@
     const iso = location?.iso || "";
     if (["THA", "IDN", "PHL", "MYS", "VNM", "KHM", "LKA"].includes(iso))
       return {
-        sky: "#7da9a1",
-        far: "#59797b",
-        near: "#385462",
-        neon: "#edb76d",
-        plant: "#759b69",
-        trim: "#bf9b70",
+        sky: "#72c2c4",
+        far: "#548f9b",
+        near: "#315c78",
+        neon: "#ffbb62",
+        plant: "#62a66f",
+        trim: "#e8a277",
       };
     if (["JPN", "KOR", "CHN", "TWN"].includes(iso))
       return {
-        sky: "#94a8bb",
-        far: "#637492",
-        near: "#414e70",
-        neon: "#ffb774",
-        plant: "#6c9879",
-        trim: "#c5a18c",
+        sky: "#8cc7e2",
+        far: "#5e81ab",
+        near: "#354d7b",
+        neon: "#ff9e79",
+        plant: "#63a77b",
+        trim: "#f0a77e",
       };
     if (["FRA", "DEU", "GBR", "ITA", "ESP", "NLD", "POL"].includes(iso))
       return {
-        sky: "#91a8a8",
-        far: "#778b84",
-        near: "#4f6465",
-        neon: "#f0c880",
-        plant: "#74936e",
-        trim: "#c49a74",
+        sky: "#a9cfe0",
+        far: "#7897a2",
+        near: "#4a677f",
+        neon: "#f5bf6e",
+        plant: "#70a276",
+        trim: "#e5a779",
       };
     if (["NGA", "KEN", "GHA", "ZAF", "ETH", "EGY"].includes(iso))
       return {
-        sky: "#d6a877",
-        far: "#a77e5d",
-        near: "#665755",
-        neon: "#f1cd7a",
-        plant: "#71905d",
-        trim: "#c99057",
+        sky: "#f0b778",
+        far: "#c98262",
+        near: "#79566a",
+        neon: "#ffe082",
+        plant: "#78a85e",
+        trim: "#e6a25e",
       };
     if (["USA", "CAN", "MEX", "BRA", "ARG", "CHL"].includes(iso))
       return {
-        sky: "#88aaca",
-        far: "#68859c",
-        near: "#3f5d77",
-        neon: "#f4c275",
-        plant: "#769873",
-        trim: "#b99471",
+        sky: "#93c9ee",
+        far: "#6c9db7",
+        near: "#3f6185",
+        neon: "#ffd080",
+        plant: "#7aac71",
+        trim: "#e8a877",
       };
     return {
-      sky: "#93aab0",
-      far: "#6c8285",
-      near: "#465a69",
+      sky: "#a1d3dd",
+      far: "#6c9aa2",
+      near: "#456a82",
       neon: "#eec47c",
       plant: "#7d9971",
-      trim: "#bfa27b",
+      trim: "#d9a477",
     };
   }
 
@@ -100,17 +100,6 @@
     rect(0, 107, 480, 45, night ? "#344363" : colors.far);
     rect(0, 136, 480, 45, night ? "#27364f" : colors.near);
     if (night) {
-      for (let i = 0; i < 34; i++) {
-        const x = (i * 61 + seed * 3) % 470;
-        const y = 12 + ((i * 23 + seed) % 72);
-        rect(
-          x,
-          y,
-          i % 4 === 0 ? 2 : 1,
-          i % 4 === 0 ? 2 : 1,
-          i % 3 ? "#f4dcac" : "#bdcde0",
-        );
-      }
       rect(408, 28, 19, 19, "#f2ddb0");
       rect(413, 24, 18, 19, sky);
     } else {
@@ -170,7 +159,7 @@
 
   function drawIndoorBackground(kind, location, hour, colors, seed) {
     const wall =
-      kind === "study" ? "#d8d6c3" : kind === "work" ? "#bfc8c7" : "#b4b7a8";
+      kind === "study" ? "#e8e5d4" : kind === "work" ? "#d6e2dc" : "#f0dfc5";
     rect(0, 0, 480, 200, wall);
     rect(0, 0, 480, 12, "#eee6cf");
     for (let x = 6; x < 480; x += 32)

@@ -21,8 +21,4 @@ The game has no backend or database. To refresh the browser data after editing t
 
 ## How the simulation works
 
-Population and crude birth rate influence the starting country draw. Country-level income, consumption, inequality, life expectancy, healthcare, unemployment, and other indicators shape the starting conditions. Yearly costs rise over time; earnings, job stability, savings, and debt respond to the character's choices. Family structure and individual outcomes are modeled estimates, not observed records or predictions.
-
-World Bank indicators use the latest available non-missing value for each series, so indicator years differ. Missing indicators remain unavailable instead of being filled with invented values.
-
-Source: [World Bank Indicators API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392)
+Country conditions shape the character's starting situation. Yearly costs, earnings, job stability, savings, and debt respond to the character's choices. Family members and starting abilities are generated randomly for each new life.
