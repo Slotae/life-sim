@@ -2339,10 +2339,13 @@ function drawActivity(timestamp) {
   updateActivityLabel(false);
   LifeScene.draw(timestamp, {
     activity: currentActivity,
+    event: activeEvent ? { age: activeEvent.age } : null,
     age,
     location: current,
     family: familyLife,
     clockMinutes: simulationMinutes % 1440,
     character: characterLook,
+    job: workLife?.job || "",
+    urban: current === origin ? !birthLife?.rural : true,
   });
 }

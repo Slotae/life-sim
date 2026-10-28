@@ -277,14 +277,15 @@
     }
   }
 
-  function drawWindow(location, hour, colors, seed, season) {
+  function drawWindow(location, hour, colors, seed, season, urban) {
     rect(21, 20, 258, 130, "#24324a");
     rect(27, 26, 246, 118, "#dec7a4");
     context.save();
     context.beginPath();
     context.rect(33, 32, 234, 106);
     context.clip();
-    drawCozyVillage(location, hour, colors, seed, season);
+    if (urban) drawSkyline(location, hour, colors, seed);
+    else drawCozyVillage(location, hour, colors, seed, season);
     context.restore();
     rect(145, 26, 7, 118, "#5b5260");
     rect(28, 83, 244, 7, "#5b5260");
@@ -292,38 +293,56 @@
     rect(24, 153, 254, 4, "#aa876f");
   }
 
-  function drawIndoorBackground(kind, location, hour, colors, seed, season) {
-    const wall =
-      kind === "study" ? "#e8e5d4" : kind === "work" ? "#d6e2dc" : "#f0dfc5";
+  function drawIndoorBackground(kind, location, hour, colors, seed, season, urban, job = "") {
+    const wall = kind === "study" ? "#d9e1d1" : kind === "work" ? "#cbd9d5" : "#e6d7bf";
     rect(0, 0, 480, 200, wall);
-    rect(0, 0, 480, 12, "#eee6cf");
-    for (let x = 6; x < 480; x += 32)
-      rect(x, 12, 1, 134, kind === "study" ? "#cfccbb" : "#abb5ae");
-    drawWindow(location, hour, colors, seed, season);
+    rect(0, 0, 480, 12, kind === "study" ? "#eee8d7" : "#e4e8de");
+    rect(0, 145, 480, 55, kind === "study" ? "#a88060" : "#8c7768");
+    drawWindow(location, hour, colors, seed, season, urban);
     if (kind === "study") {
-      rect(307, 29, 145, 61, "#514657");
-      rect(313, 34, 133, 49, "#455c63");
-      rect(325, 44, 87, 4, "#d2d0a8");
-      rect(325, 57, 100, 3, "#b9c6ad");
-      rect(325, 69, 69, 3, "#d2d0a8");
-      rect(350, 106, 115, 8, "#987b61");
-      rect(358, 114, 8, 32, "#6b5a54");
-      rect(449, 114, 8, 32, "#6b5a54");
-      rect(374, 91, 40, 13, "#e8d9ad");
-      rect(379, 86, 30, 7, "#7190a2");
-      rect(29, 115, 65, 30, "#7d987e");
-      rect(38, 105, 46, 10, "#91a88b");
+      rect(306, 28, 148, 68, "#584d52");
+      rect(312, 33, 136, 56, "#365c50");
+      rect(325, 44, 86, 3, "#e8e1bf");
+      rect(325, 57, 102, 3, "#d7d7b4");
+      rect(325, 70, 70, 3, "#e8e1bf");
+      rect(338, 102, 112, 7, "#bd9369");
+      rect(344, 109, 7, 36, "#755c4e");
+      rect(438, 109, 7, 36, "#755c4e");
+      rect(362, 88, 42, 14, "#e8d9ad");
+      rect(369, 83, 29, 7, "#76929b");
+      // Small bookcase and classroom supplies add context without covering the view.
+      rect(24, 112, 65, 33, "#8a6349");
+      rect(29, 119, 55, 4, "#d6b27b");
+      rect(34, 124, 7, 16, "#8199a0");
+      rect(44, 126, 6, 14, "#cf9076");
+      rect(56, 122, 8, 18, "#e1cb91");
     } else if (kind === "work") {
-      rect(321, 29, 145, 66, "#7c8c8b");
-      rect(327, 35, 133, 54, "#cad2c5");
-      for (let i = 0; i < 6; i++) {
-        rect(338 + i * 19, 45, 12, 39, i % 2 ? "#759092" : "#94a49a");
-        rect(341 + i * 19, 52, 3, 5, "#f0d18e");
-        rect(347 + i * 19, 63, 3, 5, "#f0d18e");
+      const medical = /แพทย์|พยาบาล|สุขภาพ|หมอ/.test(job);
+      const handsOn = /ช่าง|เกษตร|ก่อสร้าง|ครัว|อาหาร|ฝึก/.test(job);
+      rect(318, 28, 146, 70, medical ? "#789a95" : handsOn ? "#795f4b" : "#7c8c8b");
+      rect(325, 35, 132, 56, medical ? "#dce8df" : handsOn ? "#ae916a" : "#cad2c5");
+      if (medical) {
+        rect(380, 45, 19, 7, "#bd6f71");
+        rect(386, 39, 7, 19, "#bd6f71");
+        rect(342, 63, 92, 3, "#aabbb2");
+        rect(349, 73, 72, 3, "#aabbb2");
+        rect(30, 111, 61, 34, "#83aaa0");
+      } else if (handsOn) {
+        rect(347, 45, 91, 8, "#4c5552");
+        rect(356, 56, 9, 28, "#c78b57");
+        rect(385, 56, 12, 29, "#929e98");
+        rect(418, 56, 8, 29, "#d1ae69");
+        rect(30, 112, 61, 33, "#987a57");
+      } else {
+        for (let i = 0; i < 6; i++) {
+          rect(337 + i * 19, 45, 12, 39, i % 2 ? "#759092" : "#94a49a");
+          rect(340 + i * 19, 52, 3, 5, "#f0d18e");
+          rect(346 + i * 19, 63, 3, 5, "#f0d18e");
+        }
+        rect(30, 111, 61, 34, "#778f76");
       }
-      rect(35, 104, 68, 42, "#778f76");
-      rect(42, 93, 53, 12, "#91a880");
-      rect(58, 122, 21, 24, "#a07f61");
+      rect(37, 103, 48, 9, "#91a880");
+      rect(54, 122, 19, 23, "#a07f61");
     } else {
       rect(321, 31, 132, 5, "#8d715f");
       rect(335, 40, 49, 23, "#e5d6b6");
@@ -347,6 +366,119 @@
       rect(246, 150, 25, 13, "#68818e");
       rect(177, 170, 22, 10, "#30394a");
       rect(249, 170, 22, 10, "#30394a");
+    }
+  }
+
+  function drawKitchenScene(location, hour, colors, seed, season, urban) {
+    drawIndoorBackground("home", location, hour, colors, seed, season, urban);
+    rect(0, 0, 480, 145, "#e8dcc5");
+    // Kitchen window, hanging pans, tiled backsplash, and a stove.
+    drawWindow(location, hour, colors, seed, season, urban);
+    rect(294, 25, 166, 80, "#e8dfcd");
+    for (let y = 31; y < 103; y += 18)
+      for (let x = 301 + (y % 2) * 8; x < 457; x += 24)
+        rect(x, y, 1, 1, "#a9aa99");
+    rect(300, 106, 169, 12, "#9a7055");
+    rect(312, 118, 11, 36, "#725849");
+    rect(445, 118, 11, 36, "#725849");
+    rect(344, 122, 43, 22, "#4b5257");
+    rect(349, 117, 33, 7, "#b7c3b4");
+    rect(352, 128, 9, 5, "#d39b69");
+    rect(371, 128, 9, 5, "#d39b69");
+    rect(400, 91, 41, 15, "#d09a67");
+    rect(410, 84, 20, 7, "#91a56b");
+  }
+
+  function drawTravelScene(location, hour, colors, seed, urban) {
+    drawSkyline(location, hour, colors, seed);
+    rect(0, 126, 480, 74, "#5b6265");
+    rect(0, 128, 480, 6, "#d4bd8a");
+    rect(0, 154, 480, 5, "#d9d6c6");
+    rect(0, 180, 480, 4, "#d9d6c6");
+    rect(30, 48, 167, 59, "#37424c");
+    rect(36, 54, 155, 47, "#263e4b");
+    rect(48, 66, 10, 28, "#e2d7b5");
+    rect(61, 66, 99, 4, "#c9d5cb");
+    rect(61, 78, 78, 3, "#a9b9b0");
+    rect(61, 90, 112, 3, "#a9b9b0");
+    // A train carriage or airport shuttle makes a move/trip read immediately.
+    rect(260, 111, 168, 45, urban ? "#d9ddd1" : "#d6c8aa");
+    rect(270, 119, 36, 21, "#567889");
+    rect(312, 119, 36, 21, "#567889");
+    rect(354, 119, 36, 21, "#567889");
+    rect(397, 118, 18, 38, "#bb815f");
+    rect(279, 156, 23, 8, "#343a42");
+    rect(380, 156, 23, 8, "#343a42");
+    rect(188, 144, 26, 28, "#78624f");
+    rect(192, 149, 18, 12, "#c28c60");
+  }
+
+  function drawCareScene(location, hour, colors, seed, season, urban) {
+    drawIndoorBackground("work", location, hour, colors, seed, season, urban, "สุขภาพ");
+    rect(0, 0, 480, 145, "#e1ece5");
+    drawWindow(location, hour, colors, seed, season, urban);
+    rect(296, 25, 165, 82, "#c8d8d0");
+    rect(302, 31, 153, 70, "#edf3e9");
+    rect(373, 43, 15, 6, "#c56e77");
+    rect(377, 38, 6, 16, "#c56e77");
+    rect(319, 61, 114, 3, "#b5c5bc");
+    rect(319, 73, 90, 3, "#b5c5bc");
+    rect(288, 126, 157, 16, "#d8d4c8");
+    rect(301, 108, 117, 19, "#f0eee3");
+    rect(300, 108, 119, 5, "#8da8a2");
+    rect(312, 142, 9, 14, "#758b83");
+    rect(411, 142, 9, 14, "#758b83");
+  }
+
+  function sceneForEvent(age) {
+    if (age <= 5) return "childhood";
+    if (age <= 16) return age === 8 ? "school" : "learning";
+    if (age <= 24) return "new-start";
+    if (age <= 29) return age === 29 ? "travel" : "work";
+    if (age <= 40) return "family";
+    if (age <= 56) return age >= 45 ? "care" : "home";
+    return "retirement";
+  }
+
+  function drawEventScene(scene, state, hour, colors, seed, season) {
+    const { location, urban } = state;
+    if (scene === "childhood" || scene === "retirement") {
+      if (urban) drawSkyline(location, hour, colors, seed);
+      else drawCozyVillage(location, hour, colors, seed, season);
+      rect(28, 141, 88, 8, "#8a674d");
+      rect(38, 149, 7, 26, "#68564b");
+      rect(98, 149, 7, 26, "#68564b");
+      rect(52, 128, 39, 13, "#d5aa68");
+      rect(57, 116, 29, 12, "#81a96e");
+    } else if (scene === "school" || scene === "learning") {
+      drawIndoorBackground("study", location, hour, colors, seed, season, urban);
+      rect(307, 28, 147, 68, "#34574c");
+      rect(315, 36, 131, 52, "#29473e");
+      rect(327, 47, 91, 3, "#e9e1bc");
+      rect(327, 60, 105, 3, "#c9d5b6");
+      rect(327, 73, 68, 3, "#e9e1bc");
+      rect(66, 153, 348, 10, "#997054");
+      rect(78, 163, 8, 33, "#69574c");
+      rect(394, 163, 8, 33, "#69574c");
+      rect(105, 142, 47, 10, "#eee1bd");
+      rect(293, 142, 45, 10, "#eee1bd");
+    } else if (scene === "work" || scene === "new-start") {
+      drawIndoorBackground("work", location, hour, colors, seed, season, urban, state.job);
+      rect(73, 150, 338, 12, "#795e50");
+      rect(85, 162, 10, 34, "#514b48");
+      rect(390, 162, 10, 34, "#514b48");
+      rect(126, 130, 70, 19, "#e2d6ba");
+      rect(135, 123, 49, 7, "#869d9d");
+      rect(306, 136, 56, 13, "#ba8c65");
+    } else if (scene === "travel") {
+      drawTravelScene(location, hour, colors, seed, urban);
+    } else if (scene === "care") {
+      drawCareScene(location, hour, colors, seed, season, urban);
+    } else {
+      drawKitchenScene(location, hour, colors, seed, season, urban);
+      rect(44, 111, 54, 34, "#a87855");
+      rect(51, 103, 41, 8, "#d3aa72");
+      rect(58, 94, 25, 9, colors.plant);
     }
   }
 
@@ -509,27 +641,57 @@
     const hour = Math.floor((state.clockMinutes || 0) / 60);
     const season = Math.floor(((state.age || 0) % 1) * 4);
     const kind = activity.kind;
-    drawOutside(kind, location, hour, colors, seed, season);
-    if (kind === "study" || kind === "work") {
-      rect(341, 145, 65, 6, "#805b45");
-      rect(347, 151, 5, 17, "#684c3d");
-      rect(394, 151, 5, 17, "#684c3d");
-      rect(354, 137, 15, 7, "#f0ddb3");
-      rect(376, 139, 18, 5, "#9cb2a1");
-    }
-    if (kind === "rest" || kind === "family" || kind === "cook") {
-      rect(346, 151, 57, 5, "#805b45");
-      rect(350, 156, 5, 13, "#684c3d");
-      rect(394, 156, 5, 13, "#684c3d");
-      rect(341, 147, 67, 3, "#c49365");
+    const urban = state.urban === true;
+    const eventScene = state.event ? sceneForEvent(state.event.age) : null;
+    if (eventScene) {
+      drawEventScene(eventScene, state, hour, colors, seed, season);
+    } else if (kind === "study") {
+      drawIndoorBackground("study", location, hour, colors, seed, season, urban);
+      const desk = drawDesk("study", colors, hour);
+      state.seated = desk.seated;
+    } else if (kind === "work") {
+      drawIndoorBackground("work", location, hour, colors, seed, season, urban, state.job);
+      const desk = drawDesk("work", colors, hour);
+      state.seated = desk.seated;
+    } else if (kind === "cook") {
+      drawKitchenScene(location, hour, colors, seed, season, urban);
+    } else if (kind === "travel") {
+      drawTravelScene(location, hour, colors, seed, urban);
+    } else if (kind === "commute") {
+      drawOutside(kind, location, hour, colors, seed, season);
+      if (urban) drawSkyline(location, hour, colors, seed);
+      rect(0, 153, 480, 47, "#565d60");
+      rect(0, 153, 480, 5, "#e1d4b4");
+    } else if (kind === "exercise" || kind === "lunch") {
+      if (urban) drawSkyline(location, hour, colors, seed);
+      else drawCozyVillage(location, hour, colors, seed, season);
+      if (kind === "exercise") {
+        rect(35, 129, 7, 34, "#795c45");
+        rect(17, 120, 42, 10, "#bd805c");
+        rect(15, 130, 48, 4, "#e4c28b");
+        rect(368, 127, 7, 38, "#795c45");
+        rect(349, 117, 44, 11, "#86a46c");
+      } else {
+        rect(324, 111, 129, 30, "#875a49");
+        rect(317, 105, 143, 8, "#d2a46f");
+        rect(332, 119, 91, 4, "#e7d4aa");
+        rect(343, 128, 62, 4, "#9cae92");
+      }
+    } else {
+      drawKitchenScene(location, hour, colors, seed, season, urban);
+      rect(290, 139, 120, 9, "#986f54");
+      rect(301, 148, 8, 24, "#725648");
+      rect(390, 148, 8, 24, "#725648");
+      rect(306, 130, 37, 9, "#d9bd8b");
+      rect(354, 134, 38, 5, "#839b92");
     }
     drawAnimeCharacter(
-      kind === "commute" ? 222 : 245,
+      kind === "commute" || kind === "travel" ? 222 : 245,
       169,
       state,
       Math.floor(timestamp / 240) % 2,
     );
-    if (state.family?.members?.length && state.age < 18) {
+    if (state.family?.members?.length && (state.age < 18 || ["childhood", "family", "care"].includes(eventScene))) {
       drawAnimeCharacter(312, 169, {
         ...state,
         age: 32,
@@ -537,7 +699,7 @@
         character: { ...state.character, shirt: "#9d765d", hairstyle: 2, accessory: "none" },
       }, Math.floor(timestamp / 330) % 2);
     }
-    if (state.family?.partner && ["family", "cook", "care"].includes(kind)) {
+    if (state.family?.partner && (["family", "cook", "care"].includes(kind) || ["family", "care", "retirement"].includes(eventScene))) {
       drawAnimeCharacter(396, 169, {
         ...state,
         age: 30,
@@ -545,11 +707,20 @@
         character: { ...state.character, shirt: "#b86f76", hairstyle: 3, accessory: "none" },
       }, Math.floor(timestamp / 370) % 2);
     }
-    if (kind === "travel") {
-      rect(357, 131, 69, 24, "#f0d6a2");
-      rect(367, 137, 48, 4, "#758ba0");
-      rect(369, 145, 21, 6, "#9ab8ac");
-      rect(394, 145, 20, 6, "#d08d75");
+    if (["work", "new-start"].includes(eventScene)) {
+      drawAnimeCharacter(386, 169, {
+        ...state,
+        age: 34,
+        activity: { kind: "work" },
+        character: { ...state.character, shirt: "#6d8a82", hairstyle: 1, accessory: "none" },
+      }, Math.floor(timestamp / 350) % 2);
+    } else if (eventScene === "care") {
+      drawAnimeCharacter(386, 169, {
+        ...state,
+        age: 36,
+        activity: { kind: "work" },
+        character: { ...state.character, shirt: "#f0ede1", hairstyle: 0, accessory: "none" },
+      }, Math.floor(timestamp / 350) % 2);
     }
     // Foreground highlights make the scene feel like a framed anime game cutaway.
     rect(0, 0, 480, 3, "#202b3d");
