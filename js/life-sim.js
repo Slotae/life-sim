@@ -40,6 +40,7 @@ let speed = 0.3,
   paused = false,
   age = 18,
   elapsed = 0,
+  simulationMinutes = 420,
   last = performance.now(),
   origin,
   current,
@@ -49,9 +50,14 @@ let speed = 0.3,
   activeEvent = null,
   stats,
   lifeLog = [];
+let abilities = null;
+let characterLook = null;
 function pick(exclude = []) {
   let pool = places.filter((p) => !exclude.includes(p.city));
   return pool[Math.floor(Math.random() * pool.length)];
+}
+function pickFrom(items) {
+  return items[Math.floor(Math.random() * items.length)];
 }
 // The calendar contains only turning points; quiet years are simulated in the background.
 function ageEventData() {
@@ -81,6 +87,11 @@ function ageEventData() {
             " · ต้องวางแผนทุนและวีซ่า",
           action: "move",
           dest: studyCity,
+          application: {
+            kind: "study",
+            threshold: 68,
+            subject: "สอบชิงทุนต่างประเทศ",
+          },
           delta: [0, 5, 11, -2, -9],
           log: "ย้ายไปเริ่มเรียนที่ " + studyCity.city,
         },
@@ -88,6 +99,11 @@ function ageEventData() {
           label: "เรียนต่อใกล้บ้าน",
           sub: "ค่าใช้จ่ายต่ำกว่า · ครอบครัวยังช่วยได้",
           action: "stay",
+          application: {
+            kind: "study",
+            threshold: 50,
+            subject: "สอบเข้ามหาวิทยาลัยในประเทศ",
+          },
           delta: [1, 3, 7, 3, -3],
           log: "เลือกเรียนต่อใกล้บ้าน",
         },
@@ -95,6 +111,11 @@ function ageEventData() {
           label: "ทำงานก่อน",
           sub: "มีรายได้เร็ว · อาจกลับไปเรียนทีหลัง",
           action: "work",
+          application: {
+            kind: "job",
+            threshold: 42,
+            subject: "สมัครงานเริ่มต้น",
+          },
           delta: [-1, 0, 1, 2, 9],
           log: "เริ่มทำงานและเก็บประสบการณ์",
         },
@@ -110,6 +131,11 @@ function ageEventData() {
           label: "หางานฝึกงานตรงสาย",
           sub: "รายได้ยังน้อย แต่ได้ประสบการณ์",
           action: "internship",
+          application: {
+            kind: "job",
+            threshold: 46,
+            subject: "คัดเลือกนักศึกษาฝึกงาน",
+          },
           delta: [-1, -1, 5, 1, 3],
           log: "รับงานฝึกงานเพื่อเก็บประสบการณ์",
         },
@@ -117,6 +143,11 @@ function ageEventData() {
           label: "ย้ายไปหลักสูตรที่จ่ายไหว",
           sub: "เรียนต่อโดยลดหนี้ก้อนใหม่",
           action: "transfer",
+          application: {
+            kind: "study",
+            threshold: 48,
+            subject: "สอบย้ายหลักสูตร",
+          },
           delta: [0, 0, 3, 2, 4],
           log: "ย้ายไปเรียนหลักสูตรที่ค่าใช้จ่ายเหมาะกับฐานะ",
         },
@@ -139,6 +170,11 @@ function ageEventData() {
           label: "ย้ายไปรับงานที่ " + workCity.city,
           sub: workCity.country + " · ค่าเริ่มต้นและการย้ายสูง",
           action: "move",
+          application: {
+            kind: "job",
+            threshold: 58,
+            subject: "สัมภาษณ์งานต่างเมือง",
+          },
           dest: workCity,
           delta: [-1, 1, 4, -3, 12],
           log: "ย้ายไปเริ่มงานที่ " + workCity.city,
@@ -147,6 +183,11 @@ function ageEventData() {
           label: "เริ่มงานใกล้บ้าน",
           sub: "รายได้น้อยกว่า · มีเครือข่ายช่วยเหลือ",
           action: "stay",
+          application: {
+            kind: "job",
+            threshold: 43,
+            subject: "สัมภาษณ์งานใกล้บ้าน",
+          },
           delta: [1, 2, 2, 5, 6],
           log: "เริ่มงานใกล้บ้านและรักษาความสัมพันธ์กับครอบครัว",
         },
@@ -154,6 +195,11 @@ function ageEventData() {
           label: "รับงานอิสระระหว่างเดินทาง",
           sub: travelCity.city + " · รายได้ไม่แน่นอน",
           action: "travel",
+          application: {
+            kind: "portfolio",
+            threshold: 52,
+            subject: "คัดเลือกผลงานฟรีแลนซ์",
+          },
           dest: travelCity,
           delta: [-1, 8, 2, 0, -7],
           log: "รับงานอิสระและเดินทางไป " + travelCity.city,
@@ -498,6 +544,71 @@ function setStats() {
     document.getElementById(k).textContent = v;
     document.getElementById(k + "Bar").style.width = v + "%";
   }
+  renderAbilities();
+}
+
+function renderAbilities() {
+  const rack = document.getElementById("abilityRack");
+  if (!rack || !abilities) return;
+  const rows = [
+    ["📚 วิชาการ", abilities.study, "#91cbe0"],
+    ["🌐 ภาษา", abilities.language, "#b49be7"],
+    ["🛠 ทักษะงาน", abilities.practice, "#95d7b1"],
+    ["🗣 สัมภาษณ์", abilities.interview, "#f5c676"],
+  ];
+  rack.innerHTML = rows
+    .map(
+      ([label, value, tone]) =>
+        `<div class="ability" style="--tone:${tone}"><span>${label}</span><b>${Math.round(value)}</b><i><u style="width:${clamp(value, 0, 100)}%"></u></i></div>`,
+    )
+    .join("");
+}
+
+function applicationScore(application) {
+  return application.kind === "study"
+    ? abilities.study * 0.55 + abilities.language * 0.2 + stats.know * 0.25
+    : application.kind === "job"
+      ? abilities.practice * 0.45 +
+        abilities.interview * 0.4 +
+        stats.health * 0.15
+      : abilities.practice * 0.55 +
+        abilities.interview * 0.25 +
+        stats.know * 0.2;
+}
+
+function scheduledActivity() {
+  const hour = Math.floor((simulationMinutes % 1440) / 60);
+  const student =
+    workLife?.job.includes("นักศึกษา") || workLife?.job === "นักเรียน";
+  const working = workLife?.hours > 0 && !workLife?.job.includes("เกษียณ");
+  if (hour < 6 || hour >= 23)
+    return { name: "พักผ่อนและนอนหลับ", kind: "rest" };
+  if (hour < 8) return { name: "ตื่นนอน · เตรียมตัวออกจากบ้าน", kind: "home" };
+  if (hour < 9)
+    return {
+      name: student ? "เดินทางไปโรงเรียน" : "เดินทางไปทำงาน",
+      kind: "commute",
+    };
+  if (hour < 12)
+    return student
+      ? { name: "เรียนและทบทวนบทเรียน", kind: "study" }
+      : working
+        ? { name: "ทำงานช่วงเช้า", kind: "work" }
+        : { name: "หางานและส่งใบสมัคร", kind: "study" };
+  if (hour < 13) return { name: "พักกลางวัน · ซื้ออาหาร", kind: "lunch" };
+  if (hour < 17)
+    return student
+      ? { name: "เรียนช่วงบ่าย", kind: "study" }
+      : working
+        ? { name: "ทำงานช่วงบ่าย", kind: "work" }
+        : { name: "ฝึกทักษะระหว่างหางาน", kind: "study" };
+  if (hour < 18) return { name: "เดินทางกลับบ้าน", kind: "commute" };
+  if (hour < 20) return { name: "เตรียมอาหารและกินข้าว", kind: "cook" };
+  if (hour < 22)
+    return student
+      ? { name: "อ่านหนังสือหลังเลิกเรียน", kind: "study" }
+      : { name: "พักกับคนในครอบครัว", kind: "family" };
+  return { name: "ผ่อนคลายก่อนเข้านอน", kind: "rest" };
 }
 
 document.querySelectorAll(".speed").forEach(
@@ -536,72 +647,39 @@ function showSystem(tab, button) {
   if (button) button.classList.add("active");
   renderSystems();
 }
-function activityList() {
-  if (age < 20)
-    return [
-      { name: "อ่านหนังสือเตรียมสอบ", kind: "study" },
-      { name: "เดินทางกลับจากโรงเรียน", kind: "commute" },
-      { name: "ช่วยเตรียมอาหารที่บ้าน", kind: "cook" },
-      { name: "พักกับคนในครอบครัว", kind: "family" },
-    ];
-  if (age < 24)
-    return [
-      { name: "เรียนในห้องบรรยาย", kind: "study" },
-      { name: "ทำงานพิเศษหลังเลิกเรียน", kind: "work" },
-      { name: "เดินทางไปมหาวิทยาลัย", kind: "commute" },
-      { name: "นั่งคุยกับเพื่อน", kind: "social" },
-    ];
-  if (age < 32)
-    return [
-      { name: "เดินทางไปทำงาน", kind: "commute" },
-      { name: "ทำงานหน้าคอมพิวเตอร์", kind: "work" },
-      { name: "ซื้อของกลับบ้าน", kind: "shop" },
-      { name: "พักและโทรหาครอบครัว", kind: "family" },
-    ];
-  if (age < 45)
-    return [
-      { name: "ประชุมและทำงาน", kind: "work" },
-      {
-        name:
-          familyLife && familyLife.partner
-            ? "ทำอาหารกับคนรัก"
-            : "จัดการเรื่องที่บ้าน",
-        kind: "cook",
-      },
-      { name: "ดูแลคนในครอบครัว", kind: "family" },
-      { name: "ออกกำลังกายหลังเลิกงาน", kind: "exercise" },
-    ];
-  if (age < 60)
-    return [
-      { name: "ทำงานและวางแผนการเงิน", kind: "work" },
-      { name: "พาผู้ใหญ่ไปพบแพทย์", kind: "care" },
-      { name: "เดินเล่นพักใจ", kind: "exercise" },
-      { name: "คุยกับครอบครัวทางไกล", kind: "family" },
-    ];
-  return [
-    { name: "ทำสวนยามเช้า", kind: "garden" },
-    { name: "อ่านหนังสือริมหน้าต่าง", kind: "read" },
-    { name: "เดินทางไปเยี่ยมญาติ", kind: "travel" },
-    { name: "พักผ่อนอยู่บ้าน", kind: "rest" },
-  ];
-}
 function updateActivityLabel(force) {
-  let n = Math.floor(elapsed / 3.4);
+  const a = scheduledActivity();
+  const activityIcons = {
+    rest: "🌙",
+    home: "🌅",
+    commute: "🚌",
+    study: "📚",
+    lunch: "🍱",
+    work: "💼",
+    cook: "🍳",
+    family: "🏠",
+  };
+  const n = `${Math.floor(simulationMinutes / 30)}-${current?.city}`;
   if (n === actionCycle && !force) return;
   actionCycle = n;
-  let pool = activityList(),
-    a = pool[n % pool.length];
-  document.getElementById("activityName").textContent = a.name;
+  document.getElementById("activityName").textContent =
+    `${activityIcons[a.kind] || "✨"} ${a.name}`;
   document.getElementById("activityPlace").textContent =
     current.city + " · " + current.country;
+  const days = [
+    "อาทิตย์",
+    "จันทร์",
+    "อังคาร",
+    "พุธ",
+    "พฤหัส",
+    "ศุกร์",
+    "เสาร์",
+  ];
+  const day = Math.floor(simulationMinutes / 1440) % 7;
+  const time = Math.floor(simulationMinutes % 1440);
+  const clock = `${String(Math.floor(time / 60)).padStart(2, "0")}:${String(time % 60).padStart(2, "0")}`;
   document.getElementById("activityClock").textContent =
-    (a.kind === "work"
-      ? "วันทำงาน"
-      : a.kind === "travel"
-        ? "ระหว่างเดินทาง"
-        : "กิจวัตรประจำวัน") +
-    " · " +
-    current.city;
+    `วัน${days[day]} · ${clock}`;
 }
 function updatePlace() {
   if (!origin || !current) return;
@@ -884,35 +962,25 @@ function renderSystems() {
       "เงิน & บ้าน",
       "PPP Intl$",
       row(
-        "รายได้บ้าน / ของตัวละคร",
-        fmtPPP(finances.income) + " / " + fmtPPP(finances.personalIncome),
+        "รายได้ / เดือน",
+        fmtPPP(finances.income) +
+          " · ส่วนตัว " +
+          fmtPPP(finances.personalIncome),
       ) +
         row(
-          "ที่พัก / อาหาร",
-          fmtPPP(finances.rent) + " / " + fmtPPP(finances.food),
-        ) +
-        row(
-          "เดินทาง / สุขภาพ",
-          fmtPPP(finances.transport) + " / " + fmtPPP(finances.health),
-        ) +
-        row(
-          "ครอบครัว / ดูแล",
-          fmtPPP(finances.family) + " / " + fmtPPP(finances.care),
-        ) +
-        row(
-          "ที่อยู่อาศัย / ซ่อมบำรุง",
-          socialLife.housing + " / " + fmtPPP(finances.maintenance),
-        ) +
-        row(
-          "เงินเก็บ / บ้าน",
-          fmtPPP(finances.savings) + " / " + fmtPPP(finances.homeEquity),
-        ) +
-        row(
-          "หนี้ / สุทธิต่อเดือน",
-          fmtPPP(finances.debt) +
+          "รายจ่าย / เหลือสุทธิ",
+          fmtPPP(costs) +
             " / " +
             (net >= 0 ? "+" : "−") +
             fmtPPP(Math.abs(net)),
+        ) +
+        row(
+          "เงินเก็บ / หนี้",
+          fmtPPP(finances.savings) + " / " + fmtPPP(finances.debt),
+        ) +
+        row(
+          "ที่อยู่ / มูลค่าบ้าน",
+          socialLife.housing + " / " + fmtPPP(finances.homeEquity),
         ) +
         '<div class="tinybar"><i style="width:' +
         Math.min(100, buffer * 8) +
@@ -926,13 +994,16 @@ function renderSystems() {
       "family",
       "ครอบครัว",
       "บ้าน ~" + finances.householdSize.toFixed(1),
-      row("สมาชิกจำลอง", familyRoles, true) +
+      row("คนในบ้าน", familyRoles, true) +
         row(
           "คู่ / ลูก",
           (familyLife.partner ? "มีคู่" : "ไม่มีคู่") + " / " + childText,
         ) +
-        row("ดูแลผู้ใหญ่", familyLife.caregiving ? "ใช่" : "ไม่ใช่") +
-        row("ระยะจากบ้าน", familyLife.distance ? "อยู่ไกล" : "อยู่ใกล"),
+        row("ดูแลครอบครัว", familyLife.caregiving ? "มีภาระดูแล" : "ยังไม่มี") +
+        row(
+          "ระยะจากบ้าน",
+          familyLife.distance ? "อยู่ต่างเมือง/ประเทศ" : "อยู่ใกล้บ้าน",
+        ),
       "ภาวะเจริญพันธุ์ " +
         metric(origin, "fertility") +
         " คน/หญิง (" +
@@ -943,22 +1014,18 @@ function renderSystems() {
       "work",
       "เรียน & งาน",
       "แรงงาน",
-      row("การศึกษา", workLife.education, true) +
-        row("อาชีพ", workLife.job, true) +
+      row("วุฒิ", workLife.education, true) +
+        row("งาน", workLife.job, true) +
         row(
           "เวลางาน / เดินทาง",
           workLife.hours + " / " + workLife.commute + " ชม./สัปดาห์",
         ) +
         row(
-          "ประสบการณ์ / เงินงาน",
-          workLife.experience + " ปี / " + fmtPPP(finances.personalIncome),
+          "ประสบการณ์ / ความมั่นคง",
+          workLife.experience + " ปี / " + workLife.stability + "%",
         ) +
         row(
-          "ความมั่นคง / ชั่วโมง",
-          workLife.stability + "% / " + workLife.hours + " ชม./สัปดาห์",
-        ) +
-        row(
-          "ว่างงานประเทศ",
+          "ว่างงานในประเทศ",
           metric(origin, "unemployment") +
             "% · " +
             sourceYear(origin, "unemployment"),
@@ -988,20 +1055,17 @@ function renderSystems() {
             " ชม.",
         ) +
         row(
-          "อายุขัยเฉลี่ย",
+          "อายุขัยประเทศ",
           metric(origin, "lifeExpectancy") +
             " ปี · " +
             sourceYear(origin, "lifeExpectancy"),
         ) +
         row(
-          "สุขภาพ/คน",
-          fmtPPP(indicator(origin, "healthSpendPpp")?.value || 0) + "/ปี",
-        ) +
-        row(
-          "จ่ายเอง",
-          metric(origin, "outOfPocket") +
-            "% · " +
-            sourceYear(origin, "outOfPocket"),
+          "ค่ารักษา/คน",
+          fmtPPP(indicator(origin, "healthSpendPpp")?.value || 0) +
+            "/ปี · จ่ายเอง " +
+            metric(origin, "outOfPocket") +
+            "%",
         ),
       "ช่วงอายุจบชีวิตอิงการกระจายรอบอายุขัยประเทศ ไม่ใช่คำทำนาย",
     ),
@@ -1010,21 +1074,17 @@ function renderSystems() {
       "ประเทศ & สังคม",
       tierLabel,
       row("เกิดที่", origin.city + " · " + origin.country, true) +
-        row("อยู่ที่", current.city + " · " + current.country, true) +
-        row("พำนัก", socialLife.visa, true) +
+        row("ปัจจุบัน", current.city + " · " + current.country, true) +
+        row("วีซ่า / พำนัก", socialLife.visa, true) +
         row(
-          "GDP PPP/คน",
+          "รายได้ประเทศ/คน",
           fmtPPP(indicator(origin, "gdpPpp")?.value || 0) +
             " · " +
             sourceYear(origin, "gdpPpp"),
         ) +
         row(
-          "เมือง / พึ่งพิง",
-          metric(origin, "urban") + "% / " + metric(origin, "dependency") + "%",
-        ) +
-        row(
-          "ฆาตกรรม/แสน",
-          metric(origin, "homicide") + " · " + sourceYear(origin, "homicide"),
+          "ระดับรายได้ / อัตราเมือง",
+          tierLabel + " / " + metric(origin, "urban") + "%",
         ),
       "ข้อมูลประเทศล่าสุดที่มี · ช่องว่างคงเป็น “—” ไม่ประมาณแทน",
     ),
@@ -1110,8 +1170,17 @@ function showEvent(event) {
       const button = document.createElement("button");
       const detail = document.createElement("small");
       button.className = "opt";
-      button.textContent = option.label;
-      detail.textContent = option.sub;
+      const icon = option.application
+        ? option.application.kind === "study"
+          ? "🎓"
+          : option.application.kind === "job"
+            ? "💼"
+            : "🧰"
+        : "↗";
+      button.textContent = `${icon} ${option.label}`;
+      detail.textContent = option.application
+        ? `${option.sub} · ${option.application.subject} · คะแนน ${Math.round(applicationScore(option.application))} / ${option.application.threshold}`
+        : option.sub;
       button.append(detail);
       button.addEventListener("click", () => choose(index), { once: true });
       return button;
@@ -1561,6 +1630,19 @@ function annualLifeUpdate() {
 
   const overtimeStress = Math.max(0, workLife.hours - 40) * 0.16;
   const restRecovery = workLife.hours <= 32 ? 0.35 : 0;
+  const studying =
+    workLife.job.includes("นักศึกษา") || workLife.job.includes("นักเรียน");
+  if (studying) {
+    abilities.study = clamp(abilities.study + 1.4, 5, 98);
+    stats.know = clamp(stats.know + 0.7, 5, 98);
+  }
+  if (workLife.hours > 0 && !studying) {
+    abilities.practice = clamp(abilities.practice + 0.9, 5, 98);
+    abilities.interview = clamp(abilities.interview + 0.25, 5, 98);
+  }
+  if (current.country !== origin.country) {
+    abilities.language = clamp(abilities.language + 0.9, 5, 98);
+  }
   healthLife.stress = clamp(
     healthLife.stress + overtimeStress - restRecovery,
     5,
@@ -1589,6 +1671,7 @@ function annualLifeUpdate() {
 
 function restart() {
   elapsed = 0;
+  simulationMinutes = 420;
   age = 18;
   eventIndex = 0;
   factorAge = 18;
@@ -1604,6 +1687,19 @@ function restart() {
     know: 35 + Math.random() * 45,
     rel: 45 + Math.random() * 35,
     wealth: 20 + Math.random() * 40,
+  };
+  abilities = {
+    study: clamp(28 + stats.know * 0.58 + normal() * 8, 15, 96),
+    language: clamp(26 + stats.know * 0.3 + normal() * 13, 10, 92),
+    practice: clamp(24 + normal() * 16, 8, 82),
+    interview: clamp(28 + stats.rel * 0.45 + normal() * 10, 10, 94),
+  };
+  characterLook = {
+    skin: pickFrom(["#f4c9a9", "#e7ad8c", "#c98565", "#a9694e", "#80533f"]),
+    hair: pickFrom(["#283047", "#493a51", "#74503e", "#252c32", "#7d6047"]),
+    shirt: pickFrom(["#7899d5", "#75a58e", "#cb806f", "#9884bd", "#d0a85e"]),
+    hairstyle: Math.floor(Math.random() * 4),
+    accessory: Math.random() < 0.34 ? "glasses" : "none",
   };
   paused = false;
   activeEvent = null;
@@ -1631,9 +1727,50 @@ function restart() {
 }
 function choose(i) {
   if (!activeEvent) return;
-  const ev = activeEvent,
-    opt = ev.options[i],
-    previousLocation = current;
+  const ev = activeEvent;
+  let selectedIndex = i;
+  let opt = ev.options[i];
+  let resultText = "";
+  let failedApplication = false;
+  if (opt.application) {
+    const score = applicationScore(opt.application);
+    const passed = score >= opt.application.threshold;
+    const scoreText = `${Math.round(score)}/${opt.application.threshold}`;
+    if (passed) {
+      resultText = `ผ่าน${opt.application.subject} คะแนน ${scoreText}`;
+      opt = { ...opt, log: `${resultText} · ${opt.log}` };
+      abilities[opt.application.kind === "study" ? "study" : "practice"] =
+        clamp(
+          abilities[opt.application.kind === "study" ? "study" : "practice"] +
+            2,
+          0,
+          100,
+        );
+    } else if (opt.application.kind === "study") {
+      resultText = `คะแนน ${scoreText} ยังไม่ถึงเกณฑ์ · `;
+      const fallbackIndex = ev.age === 18 ? (i === 0 ? 1 : 2) : 2;
+      const fallback = ev.options[fallbackIndex];
+      selectedIndex = fallbackIndex;
+      opt = {
+        ...fallback,
+        application: null,
+        log:
+          resultText +
+          (fallbackIndex === 1
+            ? "เปลี่ยนไปเรียนใกล้บ้านแทนการไปต่างประเทศ"
+            : "พักแผนเรียนต่อและเริ่มหาประสบการณ์ทำงาน"),
+      };
+      resultText = opt.log;
+    } else {
+      failedApplication = true;
+      resultText = `คะแนน ${scoreText} ยังไม่ถึงเกณฑ์ · นายจ้างยังไม่รับเข้าทำงาน`;
+      opt = {
+        ...opt,
+        log: `${resultText} · ยื่นสมัครงานเพิ่มระหว่างหางาน`,
+      };
+    }
+  }
+  const previousLocation = current;
   stats.health += opt.delta[0];
   stats.happy += opt.delta[1];
   stats.know += opt.delta[2];
@@ -1658,7 +1795,19 @@ function choose(i) {
       visited.push(current);
     }
   }
-  updateChoiceSystems(ev, opt, i, previousLocation);
+  updateChoiceSystems(ev, opt, selectedIndex, previousLocation);
+  abilities.study = clamp(abilities.study + opt.delta[2] * 0.35, 5, 98);
+  abilities.interview = clamp(abilities.interview + opt.delta[3] * 0.22, 5, 98);
+  if (["work", "internship", "promotion", "training"].includes(opt.action)) {
+    abilities.practice = clamp(abilities.practice + 3, 5, 98);
+  }
+  if (failedApplication) {
+    workLife.job = "กำลังหางาน";
+    workLife.hours = 0;
+    workLife.stability = 32;
+    finances.personalIncome = 0;
+    healthLife.stress = clamp(healthLife.stress + 5, 5, 95);
+  }
   lifeLog.push({ age: ev.age, text: opt.log });
   renderJournal();
   eventIndex++;
@@ -1670,7 +1819,7 @@ function choose(i) {
   document.getElementById("icon").innerHTML = uiIcon("spark");
   document.getElementById("eventTitle").textContent = "ทางเลือกถูกบันทึก";
   document.getElementById("eventDesc").textContent =
-    opt.log + " · ผลส่งต่อไปยังเงิน งาน สุขภาพ และคนใกล้ตัว";
+    (resultText || opt.log) + " · ผลส่งต่อไปยังเงิน งาน สุขภาพ และคนใกล้ตัว";
   document.getElementById("resume").textContent = "AUTO SIM · จำลองเวลาต่อ";
   document.getElementById("lastResult").textContent =
     "อายุ " + ev.age + " · " + opt.log;
@@ -1693,6 +1842,7 @@ function tick(now) {
   last = now;
   if (!paused) {
     elapsed += dt;
+    simulationMinutes += dt * 60 * speed;
     updateTime();
     if (Math.floor(age) > factorAge) {
       while (factorAge < Math.floor(age)) annualLifeUpdate();
@@ -1718,14 +1868,14 @@ function tick(now) {
 restart();
 requestAnimationFrame(tick);
 function drawActivity(timestamp) {
-  const activities = activityList();
-  const currentActivity =
-    activities[Math.floor(elapsed / 3.4) % activities.length];
+  const currentActivity = scheduledActivity();
   updateActivityLabel(false);
   LifeScene.draw(timestamp, {
     activity: currentActivity,
     age,
     location: current,
     family: familyLife,
+    clockMinutes: simulationMinutes % 1440,
+    character: characterLook,
   });
 }

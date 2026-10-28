@@ -6,7 +6,7 @@ A choice-led life simulator. The clock runs on its own, then pauses at decisions
 
 Open `index.html` in a browser. The first decision appears at age 18. Choose one of three paths; years then pass automatically until the next major event. Use **1×**, **2×**, or **4×** to set the pace, or pause the clock yourself between events.
 
-Choices affect work, study, housing, savings, debt, health, relationships, family care, and where the character lives. A short journal keeps the last three decisions in view. The pixel-art room changes with the character's activity and day/night cycle.
+Choices affect work, study, housing, savings, debt, health, relationships, family care, and where the character lives. University and job applications compare the character's study, language, practical, and interview scores against a visible entry threshold. Scores improve through study, work, and time abroad. The in-game clock advances through a daily routine, while the character and pixel-art scene change with each new life, activity, and city.
 
 ## Project layout
 

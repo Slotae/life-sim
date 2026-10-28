@@ -36,7 +36,7 @@
       <section class="activity wide">
         <div class="actHead">
           <div>
-            <strong>ตอนนี้</strong
+            <strong>📍 ตอนนี้</strong
             ><span
               id="activityPlace"
               style="
@@ -47,14 +47,16 @@
               >เมืองปัจจุบัน</span
             >
           </div>
-          <span id="activityClock">18:42 · ตอนนี้</span>
+          <span id="activityClock" aria-live="polite"
+            >🕒 วันจันทร์ · 07:00</span
+          >
         </div>
         <div class="actFrame">
           <canvas
             id="activityCanvas"
-            width="768"
-            height="240"
-            aria-label="ฉากพิกเซลแสดงกิจกรรมประจำวันของตัวละคร"
+            width="960"
+            height="400"
+            aria-label="ฉากพิกเซลอนิเมะแสดงตัวละคร สถานที่ และกิจวัตรประจำวันที่เปลี่ยนตามเวลา"
           ></canvas>
           <div class="actTag"><b id="activityName">กำลังเรียน</b></div>
         </div>
@@ -108,6 +110,11 @@
               <div class="bar"><i id="wealthBar"></i></div>
             </div>
           </div>
+          <div
+            class="abilityRack"
+            id="abilityRack"
+            aria-label="ความสามารถของตัวละคร"
+          ></div>
           <div class="footcards">
             <div class="mini">
               <div class="miniHead">
