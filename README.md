@@ -1,17 +1,28 @@
-# Life Sim Prototype
+# Life.SIM — One Life, Many Worlds
 
-Static browser game prototype. Open `index.html` directly; it has no build step or backend. The first decision appears at age 18. Choose one of three paths; time then advances and pauses at later life events. Use 1×, 2×, or 4× to change the simulation pace.
+A choice-led life simulator. The clock runs on its own, then pauses at decisions that can change a whole chapter of the character's life.
 
-## What's included
+## Play
 
-- Time advances automatically and pauses at major life decisions.
-- Pixel-art daily activity scene with a visible SVG fallback.
-- One-screen overview for money, family, work, health, and country context.
-- Country-level World Bank indicators embedded in `index.html`; `data/world-profiles.json` is the editable data snapshot.
+Open `index.html` in a browser. The first decision appears at age 18. Choose one of three paths; years then pass automatically until the next major event. Use **1×**, **2×**, or **4×** to set the pace, or pause the clock yourself between events.
 
-## Data notes
+Choices affect work, study, housing, savings, debt, health, relationships, family care, and where the character lives. A short journal keeps the last three decisions in view. The pixel-art room changes with the character's activity and day/night cycle.
 
-Country indicators use the latest non-missing World Bank WDI value available for each series, so years vary. Birthplace draws use population and crude birth rate as a proxy. Household income, expenses, family composition, and individual outcomes are simulation estimates calibrated from country-level consumption, GDP per capita, inequality, and fertility. They are not observed personal records or predictions.
+## Project layout
+
+- `index.html` — one-screen interface
+- `styles.css` — layout and visual design
+- `js/life-sim.js` — life model, finances, events, and user interaction
+- `js/pixel-scene.js` — hand-drawn animated canvas scene
+- `data/world-profiles.json` — editable country-level source snapshot
+- `data/world-profiles.js` — browser-ready copy, generated from the JSON file
+
+The game has no backend or database. To refresh the browser data after editing the JSON, run `node scripts/build-world-data.js`. GitHub Pages runs that step automatically when `main` changes.
+
+## How the simulation works
+
+Population and crude birth rate influence the starting country draw. Country-level income, consumption, inequality, life expectancy, healthcare, unemployment, and other indicators shape the starting conditions. Yearly costs rise over time; earnings, job stability, savings, and debt respond to the character's choices. Family structure and individual outcomes are modeled estimates, not observed records or predictions.
+
+World Bank indicators use the latest available non-missing value for each series, so indicator years differ. Missing indicators remain unavailable instead of being filled with invented values.
 
 Source: [World Bank Indicators API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392)
-
