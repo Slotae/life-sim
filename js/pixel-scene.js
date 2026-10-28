@@ -389,6 +389,44 @@
     rect(410, 84, 20, 7, "#91a56b");
   }
 
+  function drawLivingRoomScene(location, hour, colors, seed, season, urban) {
+    drawIndoorBackground("home", location, hour, colors, seed, season, urban);
+    rect(0, 0, 480, 145, "#e8dcc5");
+    drawWindow(location, hour, colors, seed, season, urban);
+    rect(0, 145, 480, 55, "#876b5c");
+    rect(284, 119, 138, 28, "#668078");
+    rect(276, 111, 151, 16, "#8caa99");
+    rect(287, 145, 10, 14, "#594e4d");
+    rect(409, 145, 10, 14, "#594e4d");
+    rect(151, 148, 158, 8, "#9a7557");
+    rect(163, 156, 8, 20, "#665448");
+    rect(291, 156, 8, 20, "#665448");
+    rect(181, 138, 29, 10, "#d9bd8b");
+    rect(225, 140, 34, 8, "#8da296");
+    rect(40, 114, 9, 31, "#795a45");
+    rect(28, 104, 32, 12, "#8cad77");
+    rect(31, 94, 25, 10, "#7b9b68");
+  }
+
+  function drawBedroomScene(location, hour, colors, seed, season, urban) {
+    drawIndoorBackground("home", location, hour, colors, seed, season, urban);
+    rect(0, 0, 480, 145, "#d9d2c6");
+    drawWindow(location, hour, colors, seed, season, urban);
+    rect(0, 145, 480, 55, "#79665c");
+    rect(271, 117, 167, 37, "#574f5a");
+    rect(280, 108, 151, 36, "#d8d8ca");
+    rect(286, 112, 59, 17, "#91aeb1");
+    rect(345, 129, 91, 15, hour < 6 || hour >= 20 ? "#536b7d" : "#b89d7b");
+    rect(266, 146, 177, 9, "#8c6d56");
+    rect(281, 155, 9, 18, "#665248");
+    rect(420, 155, 9, 18, "#665248");
+    rect(218, 128, 42, 18, "#a9835f");
+    rect(223, 134, 31, 10, "#d8b984");
+    rect(228, 129, 23, 5, "#e9dfc4");
+    rect(43, 115, 8, 30, "#745b48");
+    rect(31, 106, 32, 11, "#90aa78");
+  }
+
   function drawTravelScene(location, hour, colors, seed, urban) {
     drawSkyline(location, hour, colors, seed);
     rect(0, 126, 480, 74, "#5b6265");
@@ -475,10 +513,7 @@
     } else if (scene === "care") {
       drawCareScene(location, hour, colors, seed, season, urban);
     } else {
-      drawKitchenScene(location, hour, colors, seed, season, urban);
-      rect(44, 111, 54, 34, "#a87855");
-      rect(51, 103, 41, 8, "#d3aa72");
-      rect(58, 94, 25, 9, colors.plant);
+      drawLivingRoomScene(location, hour, colors, seed, season, urban);
     }
   }
 
@@ -655,6 +690,8 @@
       state.seated = desk.seated;
     } else if (kind === "cook") {
       drawKitchenScene(location, hour, colors, seed, season, urban);
+    } else if (kind === "rest") {
+      drawBedroomScene(location, hour, colors, seed, season, urban);
     } else if (kind === "travel") {
       drawTravelScene(location, hour, colors, seed, urban);
     } else if (kind === "commute") {
@@ -678,12 +715,7 @@
         rect(343, 128, 62, 4, "#9cae92");
       }
     } else {
-      drawKitchenScene(location, hour, colors, seed, season, urban);
-      rect(290, 139, 120, 9, "#986f54");
-      rect(301, 148, 8, 24, "#725648");
-      rect(390, 148, 8, 24, "#725648");
-      rect(306, 130, 37, 9, "#d9bd8b");
-      rect(354, 134, 38, 5, "#839b92");
+      drawLivingRoomScene(location, hour, colors, seed, season, urban);
     }
     drawAnimeCharacter(
       kind === "commute" || kind === "travel" ? 222 : 245,
