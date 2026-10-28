@@ -15,6 +15,16 @@
     pants: "#455474",
     light: "#f4d28a",
   };
+  const villageLayers = [
+    "mountains.png",
+    "meadow.png",
+    "tree.png",
+    "cottage.png",
+  ].map((name) => {
+    const image = new Image();
+    image.src = window.LIFE_SIM_VILLAGE_IMAGES?.[name] || `assets/village/${name}`;
+    return image;
+  });
 
   function rect(x, y, w, h, color) {
     context.fillStyle = color;
@@ -142,14 +152,139 @@
     rect(0, 151, 480, 4, night ? "#192339" : "#394a58");
   }
 
-  function drawWindow(location, hour, colors, seed) {
+  function drawCozyVillage(location, hour, colors, seed, season = 0) {
+    const night = hour < 6 || hour >= 19;
+    const evening = hour >= 17 && hour < 20;
+    if (villageLayers.every((image) => image.complete && image.naturalWidth)) {
+      for (const layer of villageLayers) {
+        context.drawImage(layer, 0, 0, 576, 240, 0, 0, 480, 200);
+      }
+      if (night || evening) {
+        context.fillStyle = night ? "rgba(25, 34, 57, 0.43)" : "rgba(208, 113, 79, 0.16)";
+        context.fillRect(0, 0, 480, 200);
+      }
+      if (season === 3) {
+        context.fillStyle = "rgba(221, 234, 240, 0.24)";
+        context.fillRect(0, 151, 480, 49);
+      }
+      if (!night) {
+        rect(429, 20, 15, 15, "#ffe6a3");
+        rect(426, 24, 2, 7, "#ffe6a3");
+        rect(445, 24, 2, 7, "#ffe6a3");
+      } else {
+        rect(429, 20, 14, 14, "#f3eac8");
+      }
+      return;
+    }
+    const seasonGround = ["#73945d", "#7e9a55", "#b28653", "#d4d8d4"][season % 4];
+    const seasonAccent = [colors.plant, "#89ae55", "#c87854", "#8799a7"][season % 4];
+    const sky = night ? "#41516c" : evening ? "#e8a47d" : colors.sky;
+    rect(0, 0, 480, 200, sky);
+    rect(0, 70, 480, 48, season === 3 ? "#b7c5c4" : "#a7c9a0");
+    rect(0, 102, 480, 29, season === 3 ? "#9eaeac" : "#83ad78");
+    // Layered hills and a winding lane give the village depth at every scale.
+    rect(0, 96, 126, 12, season === 3 ? "#c4d0ca" : "#789b74");
+    rect(0, 90, 50, 8, season === 3 ? "#c4d0ca" : "#789b74");
+    rect(337, 86, 143, 19, season === 3 ? "#bdc9c1" : "#779675");
+    rect(389, 78, 91, 10, season === 3 ? "#bdc9c1" : "#779675");
+    if (night) {
+      rect(404, 19, 16, 16, "#f6e8bd");
+      rect(409, 16, 16, 16, sky);
+    } else {
+      rect(399, 18, 23, 23, "#ffe5a3");
+      rect(393, 25, 5, 10, "#ffe5a3");
+      rect(423, 25, 5, 10, "#ffe5a3");
+      rect(54, 31, 35, 5, "#e4eee0");
+      rect(61, 26, 22, 6, "#e4eee0");
+      rect(82, 31, 9, 4, "#e4eee0");
+      rect(278, 48, 42, 4, "#e4eee0");
+      rect(286, 43, 24, 6, "#e4eee0");
+      rect(310, 47, 12, 4, "#e4eee0");
+    }
+    // Distant cottages.
+    rect(45, 79, 43, 29, "#e6c99a");
+    rect(39, 74, 55, 7, "#945f55");
+    rect(52, 88, 10, 12, "#668891");
+    rect(72, 89, 9, 19, "#875e48");
+    rect(286, 80, 49, 29, "#e8d2a8");
+    rect(278, 75, 64, 7, "#8c5d53");
+    rect(294, 89, 12, 10, "#759392");
+    // Main cottage: layered roof, timber edge, windows and welcoming porch.
+    rect(137, 62, 175, 69, "#e7d0a4");
+    rect(126, 59, 195, 13, "#754c4e");
+    rect(139, 49, 171, 13, "#a85f57");
+    rect(157, 42, 136, 9, "#754c4e");
+    rect(160, 38, 6, 16, "#4c5056");
+    rect(166, 34, 13, 6, "#d5b99a");
+    rect(136, 69, 177, 5, "#553f49");
+    for (let x = 136; x < 312; x += 15) {
+      rect(x, 51, 2, 15, x % 2 ? "#b76d5d" : "#8f534f");
+      rect(x + 4, 63, 8, 3, "#c77a65");
+    }
+    rect(139, 74, 4, 53, "#b88d68");
+    rect(305, 74, 4, 53, "#b88d68");
+    rect(149, 82, 39, 32, "#476c70");
+    rect(153, 86, 31, 24, night ? "#efc77c" : "#a9d2cb");
+    rect(168, 86, 3, 24, "#526c67");
+    rect(153, 97, 31, 3, "#526c67");
+    rect(151, 84, 35, 3, "#e8dfbd");
+    rect(267, 82, 32, 32, "#476c70");
+    rect(271, 86, 24, 24, night ? "#efc77c" : "#a9d2cb");
+    rect(282, 86, 3, 24, "#526c67");
+    rect(271, 97, 24, 3, "#526c67");
+    rect(269, 84, 28, 3, "#e8dfbd");
+    rect(214, 89, 30, 42, "#805447");
+    rect(219, 94, 20, 37, "#ba8460");
+    rect(232, 109, 3, 3, "#f4dfaa");
+    rect(130, 127, 190, 8, "#b78765");
+    rect(146, 135, 9, 14, "#805d50");
+    rect(294, 135, 9, 14, "#805d50");
+    // Garden rows, fence, stepping stones and a little shop sign.
+    rect(0, 143, 480, 57, seasonGround);
+    rect(0, 143, 480, 5, season === 3 ? "#aebbbb" : "#8eae69");
+    for (let x = 4; x < 475; x += 27) {
+      const tuft = (x * 7 + seed) % 9;
+      rect(x, 151 + tuft, 2, 4, seasonAccent);
+      rect(x + 6, 158 + (tuft % 5), 2, 3, "#b5c477");
+    }
+    rect(0, 143, 480, 5, "#ad936a");
+    rect(0, 168, 480, 32, "#c6a679");
+    for (let x = 0; x < 480; x += 34) {
+      rect(x, 165, 3, 19, "#eee0ba");
+      rect(x + 7, 179, 17, 3, "#eee0ba");
+    }
+    rect(345, 120, 7, 28, "#805943");
+    rect(324, 119, 48, 18, "#c26f55");
+    rect(331, 123, 34, 3, "#f5d893");
+    rect(17, 137, 4, 16, "#775343");
+    rect(20, 132, 34, 4, "#775343");
+    rect(52, 132, 4, 16, "#775343");
+    rect(70, 139, 4, 15, "#79563f");
+    rect(65, 127, 15, 14, seasonAccent);
+    rect(58, 133, 29, 9, seasonAccent);
+    for (const x of [103, 118, 392, 410, 428]) {
+      rect(x + 8, 119, 6, 28, "#76513e");
+      rect(x + 2, 107, 19, 16, seasonAccent);
+      rect(x + 5, 100, 16, 13, seasonAccent);
+      rect(x + 9, 94, 10, 12, seasonAccent);
+      rect(x + 5, 108, 5, 4, season === 2 ? "#d5bd72" : "#9abd79");
+      rect(x + 14, 101, 4, 4, season === 2 ? "#e29a72" : "#a9c97f");
+      if (season === 3) rect(x - 2, 105, 26, 4, "#d8e4e3");
+    }
+    for (let x = 18; x < 110; x += 22) {
+      rect(x, 155, 15, 6, "#755b4b");
+      rect(x + 4, 151, 7, 5, seasonAccent);
+    }
+  }
+
+  function drawWindow(location, hour, colors, seed, season) {
     rect(21, 20, 258, 130, "#24324a");
     rect(27, 26, 246, 118, "#dec7a4");
     context.save();
     context.beginPath();
     context.rect(33, 32, 234, 106);
     context.clip();
-    drawSkyline(location, hour, colors, seed);
+    drawCozyVillage(location, hour, colors, seed, season);
     context.restore();
     rect(145, 26, 7, 118, "#5b5260");
     rect(28, 83, 244, 7, "#5b5260");
@@ -157,14 +292,14 @@
     rect(24, 153, 254, 4, "#aa876f");
   }
 
-  function drawIndoorBackground(kind, location, hour, colors, seed) {
+  function drawIndoorBackground(kind, location, hour, colors, seed, season) {
     const wall =
       kind === "study" ? "#e8e5d4" : kind === "work" ? "#d6e2dc" : "#f0dfc5";
     rect(0, 0, 480, 200, wall);
     rect(0, 0, 480, 12, "#eee6cf");
     for (let x = 6; x < 480; x += 32)
       rect(x, 12, 1, 134, kind === "study" ? "#cfccbb" : "#abb5ae");
-    drawWindow(location, hour, colors, seed);
+    drawWindow(location, hour, colors, seed, season);
     if (kind === "study") {
       rect(307, 29, 145, 61, "#514657");
       rect(313, 34, 133, 49, "#455c63");
@@ -202,29 +337,8 @@
     }
   }
 
-  function drawOutside(kind, location, hour, colors, seed) {
-    drawSkyline(location, hour, colors, seed);
-    rect(0, 154, 480, 46, "#756c68");
-    rect(0, 154, 480, 5, "#c6ac83");
-    rect(0, 172, 480, 28, "#485161");
-    rect(0, 172, 480, 3, "#d0b57e");
-    for (let x = 13; x < 480; x += 82) rect(x, 185, 32, 3, "#eee0b7");
-    const shopColor = kind === "travel" ? "#bd766a" : "#728d86";
-    rect(26, 93, 102, 61, "#ead6b3");
-    rect(20, 87, 114, 12, shopColor);
-    for (let x = 23; x < 132; x += 18)
-      rect(x, 87, 9, 13, x % 2 ? "#efe0bd" : shopColor);
-    rect(42, 109, 29, 45, "#668593");
-    rect(79, 107, 38, 47, "#829b92");
-    rect(47, 114, 19, 26, "#bad0c4");
-    rect(85, 112, 25, 28, "#d3d5bb");
-    rect(30, 61, 8, 35, "#5d5360");
-    rect(16, 59, 37, 7, colors.neon);
-    rect(24, 67, 21, 3, "#fff0c9");
-    rect(390, 135, 11, 29, "#705444");
-    rect(377, 117, 39, 24, colors.plant);
-    rect(371, 127, 15, 13, colors.plant);
-    rect(404, 111, 18, 29, colors.plant);
+  function drawOutside(kind, location, hour, colors, seed, season) {
+    drawCozyVillage(location, hour, colors, seed, season);
     if (kind === "commute") {
       rect(153, 141, 132, 28, "#e0bb75");
       rect(162, 132, 111, 13, "#edd497");
@@ -275,7 +389,7 @@
     return { x: 242, y: 157, seated: false };
   }
 
-  function drawAnimeCharacter(x, floor, state, frame) {
+  function drawCharacterBody(x, floor, state, frame) {
     const { kind } = state.activity;
     const look = state.character || {};
     const step = kind === "commute" || kind === "travel" ? (frame ? 3 : -2) : 0;
@@ -352,6 +466,39 @@
     }
   }
 
+  function drawBabySprite(x, floor, state) {
+    const look = state.character || {};
+    const blanket = look.shirt || "#8fae91";
+    const skin = look.skin || palette.skin;
+    rect(x - 28, floor + 1, 54, 4, "#4d5946");
+    rect(x - 21, floor - 14, 5, 8, "#43505a");
+    rect(x + 12, floor - 14, 5, 8, "#43505a");
+    rect(x - 27, floor - 21, 53, 10, "#644f47");
+    rect(x - 24, floor - 26, 45, 12, "#d7bd8e");
+    rect(x - 21, floor - 24, 39, 7, blanket);
+    rect(x - 9, floor - 34, 20, 15, "#374255");
+    rect(x - 7, floor - 32, 16, 12, skin);
+    rect(x - 9, floor - 35, 21, 6, look.hair || "#3d3543");
+    rect(x - 5, floor - 27, 2, 2, "#3b4655");
+    rect(x + 3, floor - 27, 2, 2, "#3b4655");
+    rect(x - 25, floor - 19, 3, 7, "#e6d3ac");
+    rect(x + 18, floor - 19, 3, 7, "#e6d3ac");
+  }
+
+  function drawAnimeCharacter(x, floor, state, frame) {
+    const age = Number(state.age || 0);
+    if (age < 1.5) {
+      drawBabySprite(x, floor, state);
+      return;
+    }
+    const scale = age < 6 ? 0.55 : age < 13 ? 0.72 : age < 17 ? 0.88 : age >= 70 ? 0.92 : 1;
+    context.save();
+    context.translate(x * (1 - scale), floor * (1 - scale));
+    context.scale(scale, scale);
+    drawCharacterBody(x, floor, state, frame);
+    context.restore();
+  }
+
   function draw(timestamp, state) {
     const location = state.location;
     const activity = state.activity;
@@ -360,49 +507,49 @@
       .split("")
       .reduce((sum, letter) => sum + letter.charCodeAt(0), 0);
     const hour = Math.floor((state.clockMinutes || 0) / 60);
+    const season = Math.floor(((state.age || 0) % 1) * 4);
     const kind = activity.kind;
-    if (["commute", "travel", "shop", "exercise"].includes(kind)) {
-      drawOutside(kind, location, hour, colors, seed);
-      drawAnimeCharacter(
-        kind === "commute" ? 218 : 245,
-        169,
-        state,
-        Math.floor(timestamp / 240) % 2,
-      );
-      if (kind === "travel") {
-        rect(357, 131, 69, 24, "#f0d6a2");
-        rect(367, 137, 48, 4, "#758ba0");
-        rect(369, 145, 21, 6, "#9ab8ac");
-        rect(394, 145, 20, 6, "#d08d75");
-      }
-    } else {
-      drawIndoorBackground(kind, location, hour, colors, seed);
-      rect(0, 155, 480, 45, "#806b60");
-      rect(0, 155, 480, 4, "#d1b98e");
-      for (let y = 169; y < 200; y += 14) {
-        rect(0, y, 480, 1, "#695a57");
-        for (let x = (y % 3) * 18; x < 480; x += 78)
-          rect(x, y - 8, 1, 8, "#a18370");
-      }
-      if (kind === "study" || kind === "work") {
-        const chair = kind === "study" ? "#607c93" : "#4d596b";
-        rect(201, 143, 70, 14, chair);
-        rect(206, 157, 7, 23, "#445265");
-        rect(259, 157, 7, 23, "#445265");
-      }
-      const avatar = drawDesk(kind, colors, hour);
-      drawAnimeCharacter(
-        avatar.x,
-        avatar.y,
-        { ...state, seated: avatar.seated },
-        Math.floor(timestamp / 320) % 2,
-      );
-      if (state.family?.partner && ["family", "cook", "care"].includes(kind)) {
-        rect(396, 146, 14, 5, "#403f4b");
-        rect(398, 126, 11, 19, "#b86f76");
-        rect(397, 113, 13, 15, "#f0c1a1");
-        rect(396, 109, 15, 8, "#483b51");
-      }
+    drawOutside(kind, location, hour, colors, seed, season);
+    if (kind === "study" || kind === "work") {
+      rect(341, 145, 65, 6, "#805b45");
+      rect(347, 151, 5, 17, "#684c3d");
+      rect(394, 151, 5, 17, "#684c3d");
+      rect(354, 137, 15, 7, "#f0ddb3");
+      rect(376, 139, 18, 5, "#9cb2a1");
+    }
+    if (kind === "rest" || kind === "family" || kind === "cook") {
+      rect(346, 151, 57, 5, "#805b45");
+      rect(350, 156, 5, 13, "#684c3d");
+      rect(394, 156, 5, 13, "#684c3d");
+      rect(341, 147, 67, 3, "#c49365");
+    }
+    drawAnimeCharacter(
+      kind === "commute" ? 222 : 245,
+      169,
+      state,
+      Math.floor(timestamp / 240) % 2,
+    );
+    if (state.family?.members?.length && state.age < 18) {
+      drawAnimeCharacter(312, 169, {
+        ...state,
+        age: 32,
+        activity: { kind: "family" },
+        character: { ...state.character, shirt: "#9d765d", hairstyle: 2, accessory: "none" },
+      }, Math.floor(timestamp / 330) % 2);
+    }
+    if (state.family?.partner && ["family", "cook", "care"].includes(kind)) {
+      drawAnimeCharacter(396, 169, {
+        ...state,
+        age: 30,
+        activity: { kind: "family" },
+        character: { ...state.character, shirt: "#b86f76", hairstyle: 3, accessory: "none" },
+      }, Math.floor(timestamp / 370) % 2);
+    }
+    if (kind === "travel") {
+      rect(357, 131, 69, 24, "#f0d6a2");
+      rect(367, 137, 48, 4, "#758ba0");
+      rect(369, 145, 21, 6, "#9ab8ac");
+      rect(394, 145, 20, 6, "#d08d75");
     }
     // Foreground highlights make the scene feel like a framed anime game cutaway.
     rect(0, 0, 480, 3, "#202b3d");
