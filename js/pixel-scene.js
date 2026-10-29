@@ -103,6 +103,10 @@
   }
 
   function drawSkyline(location, hour, colors, seed) {
+    if (location?.iso === "THA") {
+      drawThaiLocation(location, hour, colors, seed, 0, true);
+      return;
+    }
     const night = hour < 6 || hour >= 19;
     const evening = hour >= 17 && hour < 20;
     const sky = night ? "#202b4b" : evening ? "#c27f79" : colors.sky;
@@ -152,7 +156,122 @@
     rect(0, 151, 480, 4, night ? "#192339" : "#394a58");
   }
 
-  function drawCozyVillage(location, hour, colors, seed, season = 0) {
+  function drawThaiLocation(location, hour, colors, seed, season, urban) {
+    const night = hour < 6 || hour >= 19;
+    const dusk = hour >= 17 && hour < 20;
+    const sky = night ? "#263451" : dusk ? "#d48670" : "#83c6d5";
+    const city = location?.city || "กรุงเทพฯ";
+    rect(0, 0, 480, 200, sky);
+    rect(0, 39, 480, 5, "#dce9e5");
+    rect(19, 31, 59, 8, "#dce9e5");
+    rect(295, 49, 68, 6, "#dce9e5");
+    rect(308, 42, 38, 8, "#dce9e5");
+    if (night) rect(413, 20, 15, 15, "#f4e8be");
+    else rect(410, 18, 23, 23, "#ffe39b");
+
+    const north = city === "เชียงใหม่" || city === "อุดรธานี";
+    const south = city === "ภูเก็ต";
+    rect(0, 99, 480, 26, north ? "#789b8f" : south ? "#75aaa9" : "#739987");
+    rect(0, 117, 480, 34, "#58866d");
+    if (north) {
+      rect(0, 78, 104, 26, "#607f87");
+      rect(34, 67, 76, 18, "#607f87");
+      rect(365, 79, 115, 24, "#607f87");
+      rect(393, 65, 87, 16, "#607f87");
+    }
+    if (south) {
+      rect(0, 105, 480, 18, "#67aeb2");
+      rect(0, 122, 480, 26, "#3d8294");
+      for (let x = 0; x < 480; x += 37) rect(x, 130 + (x % 3) * 3, 24, 2, "#b6d8c3");
+    }
+
+    if (urban) {
+      for (let i = 0; i < 11; i++) {
+        const x = i * 46 - 6;
+        const height = 32 + ((seed + i * 17) % 57);
+        const y = 145 - height;
+        rect(x, y, 32, height, i % 2 ? "#516d81" : "#637f8e");
+        rect(x - 2, y, 36, 4, "#e3ad75");
+        for (let wy = y + 9; wy < 140; wy += 13) {
+          rect(x + 6, wy, 4, 5, night ? "#f2c77d" : "#d6e2ce");
+          rect(x + 19, wy, 4, 5, night ? "#e9ba72" : "#d6e2ce");
+        }
+      }
+      if (city === "กรุงเทพฯ") {
+        rect(208, 72, 58, 75, "#d5b77f");
+        rect(215, 64, 44, 9, "#a46e59");
+        rect(221, 55, 31, 10, "#e5ca8f");
+        rect(230, 44, 13, 12, "#bf8f61");
+        rect(235, 35, 4, 10, "#f2dcaa");
+        rect(190, 144, 95, 4, "#e9d5a4");
+      } else if (city === "เชียงใหม่") {
+        rect(208, 99, 68, 48, "#dfbf7c");
+        rect(201, 90, 82, 10, "#b77750");
+        rect(215, 81, 54, 10, "#d8b16e");
+        rect(224, 72, 36, 9, "#b77750");
+        rect(232, 59, 19, 13, "#e4c77f");
+        rect(239, 49, 5, 10, "#f1db9d");
+      } else if (south) {
+        rect(0, 142, 480, 58, "#d6b77d");
+      }
+      rect(0, 150, 480, 50, "#454f5a");
+      rect(0, 151, 480, 4, "#d6bd87");
+      rect(39, 135, 87, 13, "#a96e4e");
+      rect(48, 129, 63, 8, "#e5bd72");
+      rect(59, 148, 5, 12, "#363f4b");
+      rect(102, 148, 5, 12, "#363f4b");
+      rect(43, 140, 27, 4, "#f4dfaa");
+      rect(75, 138, 26, 4, "#f4dfaa");
+    } else {
+      const field = season === 2 ? "#b0a64f" : season === 3 ? "#8aa16d" : "#77a855";
+      rect(0, 130, 480, 70, field);
+      rect(0, 147, 480, 5, "#6c9d4e");
+      rect(0, 170, 480, 5, "#6c9d4e");
+      rect(0, 190, 480, 4, "#6c9d4e");
+      for (let x = 0; x < 480; x += 29) {
+        rect(x + (seed % 11), 137, 2, 24, "#c4cf79");
+        rect(x + 9, 159, 2, 25, "#d9d586");
+      }
+      rect(52, 80, 7, 64, "#76513d");
+      rect(29, 78, 51, 8, "#76513d");
+      rect(23, 71, 60, 8, "#4f7f54");
+      rect(26, 63, 48, 9, "#5f925b");
+      rect(36, 55, 37, 9, "#6a9f61");
+      // Thai timber house on stilts, with a layered gable roof and shaded porch.
+      rect(197, 88, 151, 49, "#c89158");
+      rect(186, 81, 174, 11, "#774c46");
+      rect(206, 71, 132, 11, "#a9634f");
+      rect(223, 62, 100, 9, "#774c46");
+      rect(239, 55, 69, 8, "#a9634f");
+      rect(218, 97, 8, 40, "#815640");
+      rect(320, 97, 8, 40, "#815640");
+      rect(230, 101, 37, 25, "#5d8288");
+      rect(235, 106, 26, 19, night ? "#f4ca83" : "#a8d4cc");
+      rect(280, 101, 42, 36, "#8e5e47");
+      rect(286, 107, 29, 30, "#bd8658");
+      rect(174, 133, 195, 7, "#d8aa69");
+      rect(185, 140, 8, 20, "#815640");
+      rect(349, 140, 8, 20, "#815640");
+      rect(106, 125, 7, 29, "#815640");
+      rect(85, 119, 49, 7, "#815640");
+      rect(89, 110, 39, 11, "#77a563");
+      rect(92, 102, 31, 10, "#6a955d");
+      rect(402, 128, 6, 30, "#76503e");
+      rect(392, 105, 27, 24, "#538450");
+      rect(384, 94, 37, 17, "#60935a");
+      rect(397, 84, 23, 13, "#6da262");
+    }
+    if (night || dusk) {
+      context.fillStyle = night ? "rgba(25, 33, 58, .30)" : "rgba(190, 100, 83, .14)";
+      context.fillRect(0, 0, 480, 200);
+    }
+  }
+
+  function drawCozyVillage(location, hour, colors, seed, season = 0, urban = false) {
+    if (location?.iso === "THA") {
+      drawThaiLocation(location, hour, colors, seed, season, urban);
+      return;
+    }
     const night = hour < 6 || hour >= 19;
     const evening = hour >= 17 && hour < 20;
     if (villageLayers.every((image) => image.complete && image.naturalWidth)) {
@@ -285,7 +404,7 @@
     context.rect(33, 32, 234, 106);
     context.clip();
     if (urban) drawSkyline(location, hour, colors, seed);
-    else drawCozyVillage(location, hour, colors, seed, season);
+    else drawCozyVillage(location, hour, colors, seed, season, urban);
     context.restore();
     rect(145, 26, 7, 118, "#5b5260");
     rect(28, 83, 244, 7, "#5b5260");
@@ -356,8 +475,8 @@
     }
   }
 
-  function drawOutside(kind, location, hour, colors, seed, season) {
-    drawCozyVillage(location, hour, colors, seed, season);
+  function drawOutside(kind, location, hour, colors, seed, season, urban) {
+    drawCozyVillage(location, hour, colors, seed, season, urban);
     if (kind === "commute") {
       rect(153, 141, 132, 28, "#e0bb75");
       rect(162, 132, 111, 13, "#edd497");
@@ -572,16 +691,35 @@
     rect(x - 21, floor + 1, 44, 4, "#403f4b");
 
     // Shoes, legs, and jacket use one-pixel outlines to read like a small game sprite.
-    rect(x - 12, floor - 18 + step, 10, 18, "#34415b");
-    rect(x + 2, floor - 18 - step, 10, 18, "#34415b");
-    rect(x - 15, floor - 3 + step, 15, 5, "#242c42");
-    rect(x + 1, floor - 3 - step, 16, 5, "#242c42");
+    if (seated) {
+      rect(x - 12, floor - 24, 11, 11, "#34415b");
+      rect(x + 2, floor - 24, 11, 11, "#34415b");
+      rect(x - 15, floor - 15, 18, 5, "#242c42");
+      rect(x + 1, floor - 15, 18, 5, "#242c42");
+    } else {
+      rect(x - 12, floor - 18 + step, 10, 18, "#34415b");
+      rect(x + 2, floor - 18 - step, 10, 18, "#34415b");
+      rect(x - 15, floor - 3 + step, 15, 5, "#242c42");
+      rect(x + 1, floor - 3 - step, 16, 5, "#242c42");
+    }
     rect(x - 15, floor - 44, 31, 28, palette.outline);
     rect(x - 12, floor - 42, 25, 24, jacket);
     rect(x - 2, floor - 41, 3, 21, kind === "study" ? "#d6e2d0" : "#efd09a");
     rect(x - 17, floor - 42, 7, 20, palette.outline);
     rect(x - 19, floor - 38 + (frame ? 1 : 0), 6, 17, skin);
     rect(x + 11, floor - 40 + (frame ? -1 : 1), 7, 17, skin);
+    if (seated) {
+      rect(x - 20, floor - 35, 7, 13, skin);
+      rect(x + 13, floor - 35, 7, 13, skin);
+      rect(x - 15, floor - 24, 8, 4, skin);
+      rect(x + 8, floor - 24, 8, 4, skin);
+    } else if (kind === "cook") {
+      rect(x + 13, floor - 40, 12, 7, skin);
+      rect(x + 22, floor - 34, 8, 4, skin);
+    } else if (kind === "exercise") {
+      rect(x - 23 + (frame ? 3 : 0), floor - 37, 9, 8, skin);
+      rect(x + 13 - (frame ? 3 : 0), floor - 35, 10, 8, skin);
+    }
     rect(x - 14, floor - 69, 28, 27, palette.outline);
     rect(x - 12, floor - 67, 24, 23, skin);
 
@@ -652,10 +790,29 @@
     rect(x + 18, floor - 19, 3, 7, "#e6d3ac");
   }
 
+  function drawRestingSprite(x, floor, state, frame) {
+    const look = state.character || {};
+    const skin = look.skin || palette.skin;
+    rect(x - 37, floor - 29, 66, 13, "#343d53");
+    rect(x - 34, floor - 27, 59, 9, look.shirt || "#7899d5");
+    rect(x + 17, floor - 43, 20, 20, "#343d53");
+    rect(x + 19, floor - 41, 16, 16, skin);
+    rect(x + 16, floor - 45, 21, 7, look.hair || "#26324b");
+    rect(x + 12, floor - 38, 8, 15, look.hair || "#26324b");
+    rect(x + 24, floor - 35, 2, 2, "#263d62");
+    rect(x + 30, floor - 35, 2, 2, "#263d62");
+    rect(x - 2, floor - 25 + (frame ? 1 : 0), 18, 4, skin);
+    rect(x - 23, floor - 31, 25, 8, "#d7bd8e");
+  }
+
   function drawAnimeCharacter(x, floor, state, frame) {
     const age = Number(state.age || 0);
     if (age < 1.5) {
       drawBabySprite(x, floor, state);
+      return;
+    }
+    if (state.activity.kind === "rest") {
+      drawRestingSprite(x, floor, state, frame);
       return;
     }
     const scale = age < 6 ? 0.55 : age < 13 ? 0.72 : age < 17 ? 0.88 : age >= 70 ? 0.92 : 1;
@@ -695,13 +852,13 @@
     } else if (kind === "travel") {
       drawTravelScene(location, hour, colors, seed, urban);
     } else if (kind === "commute") {
-      drawOutside(kind, location, hour, colors, seed, season);
+      drawOutside(kind, location, hour, colors, seed, season, urban);
       if (urban) drawSkyline(location, hour, colors, seed);
       rect(0, 153, 480, 47, "#565d60");
       rect(0, 153, 480, 5, "#e1d4b4");
     } else if (kind === "exercise" || kind === "lunch") {
       if (urban) drawSkyline(location, hour, colors, seed);
-      else drawCozyVillage(location, hour, colors, seed, season);
+      else drawCozyVillage(location, hour, colors, seed, season, urban);
       if (kind === "exercise") {
         rect(35, 129, 7, 34, "#795c45");
         rect(17, 120, 42, 10, "#bd805c");

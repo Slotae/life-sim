@@ -36,6 +36,12 @@ const places = countryProfiles
       (c.indicators.population?.value || 1) *
       (c.indicators.birthRate?.value || 15),
   }));
+const thailand = places.find((place) => place.iso === "THA");
+const thaiPlaces = thailand
+  ? ["กรุงเทพฯ", "เชียงใหม่", "ขอนแก่น", "นครราชสีมา", "ภูเก็ต", "ชลบุรี", "อุดรธานี"].map(
+      (city) => ({ ...thailand, city, country: "ไทย" }),
+    )
+  : places;
 let speed = 0.125,
   paused = false,
   age = 0,
@@ -53,24 +59,28 @@ let speed = 0.125,
 let abilities = null;
 let characterLook = null;
 let birthLife = null;
-let annualFocus = "balance";
-function pick(exclude = []) {
-  let pool = places.filter((p) => !exclude.includes(p.city));
-  return pool[Math.floor(Math.random() * pool.length)];
+function pick(exclude = [], source = places) {
+  const pool = source.filter((place) => !exclude.includes(place.city));
+  return pool[Math.floor(Math.random() * pool.length)] || source[0];
+}
+function pickThai(exclude = []) {
+  return pick(exclude, thaiPlaces);
+}
+function localizePlace(place) {
+  return place.iso === "THA" ? { ...place, country: "ไทย" } : place;
 }
 function pickFrom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 // The calendar contains only turning points; quiet years are simulated in the background.
 function ageEventData() {
-  const studyCity = pick([home.city]);
-  const workCity = pick([home.city, studyCity.city]);
-  const travelCity = pick([home.city, studyCity.city, workCity.city]);
-  const nextCity = pick([
+  const studyCity = pickThai([home.city]);
+  const workCity = pickThai([home.city, studyCity.city]);
+  const travelCity = localizePlace(pick([home.city], places));
+  const nextCity = pickThai([
     home.city,
     studyCity.city,
     workCity.city,
-    travelCity.city,
   ]);
 
   return [
@@ -389,21 +399,21 @@ function ageEventData() {
       desc: "การเรียนที่ผ่านมาฐานะของบ้านและโอกาสในพื้นที่ ส่งผลต่อทางเลือกเรื่องงานและการศึกษาต่อ",
       options: [
         {
-          label: "สมัครเรียนต่อต่างประเทศ",
+          label: "ย้ายเข้าเมืองเพื่อเรียนต่อมหาวิทยาลัย",
           sub:
             studyCity.city +
             " · " +
             studyCity.country +
-            " · ต้องวางแผนทุนและวีซ่า",
+            " · มีค่าเดินทางและที่พักเพิ่ม",
           action: "move",
           dest: studyCity,
           application: {
             kind: "study",
-            threshold: 68,
-            subject: "สอบชิงทุนต่างประเทศ",
+            threshold: 52,
+            subject: "สอบเข้ามหาวิทยาลัยในเมืองใหญ่",
           },
           delta: [0, 5, 11, -2, -9],
-          log: "ย้ายไปเริ่มเรียนที่ " + studyCity.city,
+          log: "ย้ายไปเรียนต่อในเมือง " + studyCity.city,
         },
         {
           label: "เรียนต่อใกล้บ้าน",
@@ -891,34 +901,6 @@ function setStats() {
   renderAbilities();
 }
 
-const focusChoices = [
-  ["balance", "balance", "สมดุล", "รักษาทั้งสุขภาพและชีวิตประจำวัน"],
-  ["study", "book", "เรียนรู้", "เพิ่มความรู้และโอกาสด้านการศึกษา"],
-  ["family", "family", "ครอบครัว", "ใช้เวลากับคนใกล้ตัว"],
-  ["health", "health", "สุขภาพ", "พักและดูแลร่างกายกับจิตใจ"],
-  ["hobby", "hobby", "งานอดิเรก", "เติมความสุขและฝึกสิ่งที่ชอบ"],
-  ["work", "work", "งาน", "เพิ่มทักษะและรายได้เมื่อเข้าสู่วัยทำงาน"],
-];
-function updateFocusPanel() {
-  const panel = document.getElementById("focusOptions");
-  if (!panel) return;
-  panel.replaceChildren(
-    ...focusChoices.map(([key, icon, label, description]) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = `focusChoice${annualFocus === key ? " selected" : ""}`;
-      button.innerHTML = `${uiIcon(icon)}<span>${label}</span>`;
-      button.title = description;
-      button.setAttribute("aria-pressed", annualFocus === key ? "true" : "false");
-      button.addEventListener("click", () => {
-        annualFocus = key;
-        updateFocusPanel();
-      });
-      return button;
-    }),
-  );
-}
-
 function renderAbilities() {
   const rack = document.getElementById("abilityRack");
   if (!rack || !abilities) return;
@@ -1293,7 +1275,7 @@ function giniSigma(g) {
   return 2 * Math.sqrt(Math.sqrt(q * q - l / a) - q);
 }
 function tierOf(country) {
-  let p = places.find((x) => x.country === country);
+  let p = places.find((x) => x.country === country) || (country === "ไทย" ? thailand : null);
   let l = p?.profile?.incomeLevel || "Not classified";
   return l === "High income"
     ? "high"
@@ -1318,11 +1300,19 @@ function initLifeSystems() {
     gini = indicator(origin, "gini"),
     le = indicator(origin, "lifeExpectancy");
   const familyName = pickFrom([
-    "Sok", "Patel", "Silva", "Kim", "Mensah", "Okafor", "Martin", "Santos", "Hassan", "Tanaka",
+    "ศรีสุข", "วัฒนกุล", "แสงทอง", "ใจดี", "บุญมี", "พูนผล", "แก้วมณี", "ตั้งตรง", "สุขสันต์", "อินทร์คำ",
   ]);
-  const givenNames = ["Nok", "Amira", "Leo", "Mali", "Asha", "Noah", "Lina", "Ravi", "Sofia", "Min"];
-  const adultNames = ["Dao", "Mina", "Amina", "Joseph", "Linh", "Mateo", "Sara", "Kofi", "Hana", "Rosa"];
-  const urbanShare = indicator(origin, "urban")?.value || 50;
+  const givenNames = ["มินท์", "ภูมิ", "ฟ้า", "ต้น", "น้ำ", "ธารา", "นัท", "ปัน", "กานต์", "ข้าวหอม"];
+  const adultNames = ["มาลี", "สมชาย", "สุรีย์", "ประเสริฐ", "อรทัย", "วิชัย", "รัตนา", "นิรันดร์", "จันทร์", "วรรณา"];
+  const urbanShare = {
+    "กรุงเทพฯ": 97,
+    "ชลบุรี": 74,
+    "เชียงใหม่": 69,
+    "ภูเก็ต": 65,
+    "ขอนแก่น": 62,
+    "นครราชสีมา": 58,
+    "อุดรธานี": 55,
+  }[origin.city] || indicator(origin, "urban")?.value || 50;
   const isRural = Math.random() > urbanShare / 100;
   const maternalAge = 20 + Math.floor(Math.random() * 19);
   const paternalAge = maternalAge + 1 + Math.floor(Math.random() * 12);
@@ -1630,7 +1620,7 @@ function showEvent(event) {
       workLife.job.includes("นักศึกษา") || workLife.job === "นักเรียน";
     event.route = studying ? "study" : "work";
     if (!studying) {
-      const nextCity = pick([current.city, origin.city]);
+      const nextCity = pickThai([current.city, origin.city]);
       event.title = "สัญญางานแรกกำลังจะจบ";
       event.desc =
         "รายได้เริ่มเข้าบ้านแล้ว แต่สัญญาจ้างและอนาคตในอาชีพยังไม่แน่นอน คุณจะรักษาความมั่นคงหรือยอมเริ่มใหม่";
@@ -1695,11 +1685,14 @@ function showEvent(event) {
   document.getElementById("decision").classList.add("show");
 
   const optionList = document.getElementById("options");
+  const impactNames = ["สุขภาพ", "ความสุข", "ความรู้", "คนใกล้ตัว", "เงินเก็บ"];
   optionList.replaceChildren(
     ...event.options.map((option, index) => {
       const button = document.createElement("button");
       const detail = document.createElement("small");
+      const impact = document.createElement("span");
       button.className = "opt";
+      button.type = "button";
       const icon = option.application
         ? option.application.kind === "study"
           ? "book"
@@ -1711,7 +1704,15 @@ function showEvent(event) {
       detail.textContent = option.application
         ? `${option.sub} · ${option.application.subject} · คะแนน ${Math.round(applicationScore(option.application))} / ${option.application.threshold}`
         : option.sub;
-      button.append(detail);
+      impact.className = "optionImpact";
+      impact.textContent = option.delta
+        .map((value, statIndex) => ({ value, label: impactNames[statIndex] }))
+        .filter((item) => item.value !== 0)
+        .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+        .slice(0, 2)
+        .map((item) => `${item.label} ${item.value > 0 ? "+" : "−"}${Math.abs(item.value)}`)
+        .join(" · ");
+      button.append(detail, impact);
       button.addEventListener("click", () => choose(index), { once: true });
       return button;
     }),
@@ -1852,12 +1853,12 @@ function updateChoiceSystems(event, option, choiceIndex, previousLocation) {
       }
       break;
     case 18:
-      if (choiceIndex === 0) {
-        workLife.education = "ปริญญาตรี · ต่างประเทศ";
+      if (option.action === "move") {
+        workLife.education = "ปริญญาตรี · ในประเทศ";
         workLife.job = "นักศึกษา";
-        workLife.hours = 14;
-        finances.debt += finances.income * 2;
-        socialLife.visa = "วีซ่านักศึกษา";
+        workLife.hours = 16;
+        finances.debt += finances.income * 0.8;
+        socialLife.visa = "พลเมืองในประเทศเกิด";
         socialLife.housing = "หอพัก / แชร์บ้าน";
       } else if (choiceIndex === 1) {
         workLife.education = "ปริญญาตรี · ในประเทศ";
@@ -2289,39 +2290,9 @@ function annualLifeUpdate() {
     5,
     98,
   );
-  applyAnnualFocus();
   recordYearlyStory();
   setStats();
   renderSystems();
-}
-
-function applyAnnualFocus() {
-  const student = workLife.job.includes("นักศึกษา") || workLife.job.includes("นักเรียน");
-  if (annualFocus === "study" && age >= 5) {
-    abilities.study = clamp(abilities.study + (student ? 2.2 : 0.8), 5, 98);
-    stats.know = clamp(stats.know + (student ? 1.5 : 0.5), 5, 98);
-    stats.happy = clamp(stats.happy - 0.5, 5, 98);
-  } else if (annualFocus === "family") {
-    stats.rel = clamp(stats.rel + 2, 5, 98);
-    stats.happy = clamp(stats.happy + 0.8, 5, 98);
-    healthLife.stress = clamp(healthLife.stress - 1, 5, 95);
-  } else if (annualFocus === "health") {
-    stats.health = clamp(stats.health + 1.5, 5, 98);
-    healthLife.mental = clamp(healthLife.mental + 1.2, 5, 98);
-    healthLife.stress = clamp(healthLife.stress - 2, 5, 95);
-  } else if (annualFocus === "hobby") {
-    stats.happy = clamp(stats.happy + 2, 5, 98);
-    abilities.practice = clamp(abilities.practice + 0.9, 5, 98);
-    stats.rel = clamp(stats.rel + 0.5, 5, 98);
-  } else if (annualFocus === "work" && age >= 16 && !isStudent) {
-    abilities.practice = clamp(abilities.practice + 1.8, 5, 98);
-    workLife.stability = clamp(workLife.stability + 1, 10, 95);
-    finances.personalIncome *= 1.025;
-    healthLife.stress = clamp(healthLife.stress + 1.5, 5, 95);
-  } else {
-    stats.happy = clamp(stats.happy + 0.35, 5, 98);
-    stats.rel = clamp(stats.rel + 0.25, 5, 98);
-  }
 }
 
 function recordYearlyStory() {
@@ -2358,8 +2329,7 @@ function restart() {
   eventIndex = 0;
   factorAge = 0;
   lifeLog = [];
-  annualFocus = "balance";
-  origin = pick([]);
+  origin = pickThai();
   current = origin;
   home = origin;
   visited = [origin];
@@ -2387,7 +2357,6 @@ function restart() {
   activeEvent = null;
   document.getElementById("end").classList.remove("show");
   document.getElementById("decision").classList.remove("show");
-  document.getElementById("focusPanel").hidden = false;
   document.getElementById("eventCard").classList.add("waiting");
   document.getElementById("pause").disabled = false;
   document.getElementById("pause").textContent = "Ⅱ หยุด";
@@ -2401,7 +2370,6 @@ function restart() {
   initLifeSystems();
   events = ageEventData();
   lifeLog.push({ age: 0, text: `เกิดใน${birthLife.birthplace} · ${birthLife.rural ? "ชุมชนชนบท" : "เขตเมือง"} · ครอบครัวมีสมาชิก ${familyLife.members.length} คน` });
-  updateFocusPanel();
   last = null;
   setStats();
   updatePlace();
@@ -2443,7 +2411,7 @@ function choose(i) {
         log:
           resultText +
           (fallbackIndex === 1
-            ? "เปลี่ยนไปเรียนใกล้บ้านแทนการไปต่างประเทศ"
+            ? "เปลี่ยนไปเรียนใกล้บ้านแทนการย้ายเข้าเมือง"
             : "พักแผนเรียนต่อและเริ่มหาประสบการณ์ทำงาน"),
       };
       resultText = opt.log;

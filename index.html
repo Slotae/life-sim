@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#101411" />
-    <title>ชีวิต.SIM — One Life, Many Worlds</title>
+    <meta name="theme-color" content="#0d1422" />
+    <title>ชีวิต.SIM — หนึ่งชีวิตเริ่มที่ไทย</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -13,7 +13,7 @@
         <div class="logo">
           <div class="sigil">↗</div>
           <b>ชีวิต<span style="color: var(--lime)">.</span>SIM</b
-          ><em>/ ONE LIFE · WHOLE WORLD</em>
+          ><em>/ ONE LIFE · THAI START</em>
         </div>
         <div class="controls">
           <label>เวลา</label
@@ -26,8 +26,8 @@
       </header>
       <div class="head">
         <div>
-          <h1>หนึ่งชีวิต · โลกทั้งใบ</h1>
-          <div class="sub">เวลาจะเดินเอง — เลือกเฉพาะจังหวะที่เปลี่ยนชีวิต</div>
+          <h1>หนึ่งชีวิต · เริ่มต้นที่ไทย</h1>
+          <div class="sub">เวลาเดินเอง · เลือกเมื่อถึงจังหวะสำคัญ</div>
         </div>
         <div class="time">
           <b id="age">0 ปี</b><span id="date">2026 · วัยทารก</span>
@@ -114,11 +114,32 @@
               <div class="bar"><i id="wealthBar"></i></div>
             </div>
           </div>
-          <div
-            class="abilityRack"
-            id="abilityRack"
-            aria-label="ความสามารถของตัวละคร"
-          ></div>
+        </section>
+        <aside class="right waiting" id="eventCard">
+          <div class="rHead">
+            <strong>จังหวะสำคัญ</strong><span id="eventAge">อายุ 18</span>
+          </div>
+          <div class="eventIcon" id="icon"><svg class="uiIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v9H3z"/><path d="M9 20v-6h6v6"/></svg></div>
+          <div class="eventTitle" id="eventTitle">ชีวิตกำลังดำเนินไป</div>
+          <div class="eventDesc" id="eventDesc">
+            เวลาเดินเอง เหตุการณ์สำคัญเท่านั้นที่จะหยุดให้เลือก
+          </div>
+          <div class="when" id="when">อีกประมาณ 5 ปี</div>
+          <div class="decision" id="decision">
+            <small>เลือกทางที่เหมาะกับชีวิตตอนนี้</small>
+            <div class="options" id="options"></div>
+          </div>
+          <div class="resume" id="resume">เวลาเดินอัตโนมัติ · หยุดเมื่อถึงเหตุการณ์สำคัญ</div>
+          <div class="auto" id="auto"><i></i></div>
+          <div class="bottomrow">
+            <span id="lastResult">ยังไม่มีการตัดสินใจ</span>
+          </div>
+        </aside>
+      </div>
+      <details class="lifeDetails">
+        <summary><svg class="uiIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="8" cy="5" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="10" cy="19" r="2"/></svg><span>ข้อมูลชีวิตเพิ่มเติม</span><small>ความสามารถ · ครอบครัว · การเรียนและงาน · บันทึก</small></summary>
+        <div class="lifeDetailsGrid">
+          <div class="abilityRack" id="abilityRack" aria-label="ความสามารถของตัวละคร"></div>
           <div class="footcards">
             <div class="mini">
               <div class="miniHead">
@@ -147,39 +168,12 @@
               <div class="lifeJournal" id="lifeJournal"></div>
             </div>
           </div>
-        </section>
-        <aside class="right waiting" id="eventCard">
-          <div class="rHead">
-            <strong>จังหวะสำคัญถัดไป</strong><span id="eventAge">อายุ 18</span>
-          </div>
-          <div class="eventIcon" id="icon"><svg class="uiIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v9H3z"/><path d="M9 20v-6h6v6"/></svg></div>
-          <div class="eventTitle" id="eventTitle">ชีวิตกำลังดำเนินไป</div>
-          <div class="eventDesc" id="eventDesc">
-            เวลาเดินเอง เหตุการณ์สำคัญเท่านั้นที่จะหยุดให้เลือก
-          </div>
-          <div class="when" id="when">อีกประมาณ 5 ปี</div>
-          <div class="decision" id="decision">
-            <small>เลือกเส้นทางหนึ่ง — ผลจะติดตามไปในชีวิตช่วงต่อๆ ไป</small>
-            <div class="options" id="options"></div>
-          </div>
-          <section class="focusPanel" id="focusPanel">
-            <div class="focusHead"><strong>จุดเน้นของปีนี้</strong><span>เปลี่ยนได้ทุกเมื่อ</span></div>
-            <div class="focusOptions" id="focusOptions"></div>
+          <section class="systems">
+            <div class="sysTop"><strong>ภาพรวมชีวิต</strong></div>
+            <div class="systemBoard" id="sysPanel"></div>
           </section>
-          <div class="resume" id="resume">AUTO SIM · จำลองเวลาอัตโนมัติ</div>
-          <div class="auto" id="auto"><i></i></div>
-          <div class="bottomrow">
-            <span id="lastResult">ยังไม่มีการตัดสินใจ</span
-            ><span>ไม่ต้องกดทุกปี</span>
-          </div>
-        </aside>
-      </div>
-      <section class="systems">
-        <div class="sysTop">
-          <strong>ภาพรวมชีวิต</strong>
         </div>
-        <div class="systemBoard" id="sysPanel"></div>
-      </section>
+      </details>
     </div>
     <div class="toast" id="toast"></div>
     <script src="data/world-profiles.js"></script>
