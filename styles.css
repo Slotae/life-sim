@@ -3179,3 +3179,62 @@ body {
   .lifeDetails .systemCard .sysrow b,
   .lifeDetails .systemCard .sysrow b.long { font-size: 15px; }
 }
+
+/* Keep the play screen compact and let the expanded details use the full row. */
+.shell {
+  width: min(100%, 1440px);
+  padding: 18px clamp(16px, 2.2vw, 30px) 28px;
+  gap: 12px 16px;
+}
+.head h1 { font-size: clamp(24px, 2vw, 30px); }
+.sub { font-size: 14px; }
+.time b { font-size: 27px; }
+.right { padding: 16px; }
+.eventTitle { font-size: 21px; }
+.eventDesc { font-size: 14px; }
+.options .opt { min-height: 62px; font-size: 15px; }
+.options .opt > small { font-size: 12px; }
+.meter { padding: 11px 12px; }
+.meterRow { font-size: 13px; }
+.meter strong { font-size: 21px; }
+.lifeDetailsGrid {
+  width: 100%;
+  grid-template-columns: minmax(210px, .8fr) minmax(240px, 1fr) minmax(0, 1.6fr);
+  align-items: start;
+}
+.lifeDetailsGrid > .abilityRack,
+.lifeDetailsGrid > .footcards,
+.lifeDetailsGrid > .systems {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+.lifeDetailsGrid > .abilityRack { grid-column: 1; }
+.lifeDetailsGrid > .footcards { grid-column: 2; }
+.lifeDetailsGrid > .systems { grid-column: 3; }
+.lifeDetails .systemBoard {
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.lifeDetails .systemCard { min-width: 0; overflow-wrap: anywhere; }
+
+@media (max-width: 1080px) {
+  .shell { grid-template-columns: minmax(0, 1fr) minmax(300px, 350px); }
+  .lifeDetailsGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+  .lifeDetailsGrid > .abilityRack { grid-column: 1; }
+  .lifeDetailsGrid > .footcards { grid-column: 2; }
+  .lifeDetailsGrid > .systems { grid-column: 1 / -1; }
+  .lifeDetails .systemBoard { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .shell { grid-template-columns: minmax(0, 1fr); padding: 12px; }
+  .lifeDetailsGrid { grid-template-columns: minmax(0, 1fr); }
+  .lifeDetailsGrid > .abilityRack,
+  .lifeDetailsGrid > .footcards,
+  .lifeDetailsGrid > .systems { grid-column: 1; }
+  .lifeDetails .systemBoard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .shell { padding: 10px; }
+  .lifeDetails .systemBoard { grid-template-columns: minmax(0, 1fr); }
+}
