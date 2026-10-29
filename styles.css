@@ -3028,3 +3028,40 @@ body {
   .lifeDetails > summary small { flex-basis: 100%; padding-left: 29px; }
   .options .opt { font-size: 14px; }
 }
+
+/* Larger type and clearer action previews for comfortable reading. */
+.logo { font-size: 16px; }
+.logo em, .controls label { font-size: 12px; }
+.controls button { font-size: 13px; }
+.head h1 { font-size: clamp(26px, 2.7vw, 34px); }
+.sub { font-size: 15px; }
+.time b { font-size: 30px; }
+.time span { font-size: 13px; }
+.actHead strong { font-size: 16px; }
+.actHead span { font-size: 13px; }
+.originLine { font-size: 13px; }
+.meterRow { font-size: 14px; }
+.meter strong { font-size: 23px; }
+.rHead strong { font-size: 17px; }
+.rHead span, .when { font-size: 13px; }
+.eventTitle { font-size: 24px; }
+.eventDesc { font-size: 15px; }
+.decision > small { font-size: 13px; }
+.options .opt { font-size: 16px; }
+.options .opt > small { font-size: 13px; }
+.optionImpact { font-size: 13px; }
+.resume, .bottomrow { font-size: 12px; }
+.lifeDetails > summary { font-size: 16px; }
+.lifeDetails > summary small { font-size: 13px; }
+.lifeDetails .detail, .lifeDetails .lifeJournal { font-size: 13px; }
+.lifeDetails .miniHead strong { font-size: 14px; }
+.lifeDetails .systemCard { font-size: 13px; }
+
+@media (max-width: 520px) {
+  .head h1 { font-size: 25px; }
+  .sub { font-size: 13px; }
+  .eventTitle { font-size: 21px; }
+  .eventDesc { font-size: 14px; }
+  .options .opt { font-size: 15px; }
+  .options .opt > small, .optionImpact { font-size: 12px; }
+}

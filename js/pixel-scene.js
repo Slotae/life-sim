@@ -679,9 +679,13 @@
     const { kind } = state.activity;
     const look = state.character || {};
     const step = kind === "commute" || kind === "travel" ? (frame ? 3 : -2) : 0;
-    const body =
-      look.shirt ||
-      (kind === "study" ? "#739ad1" : kind === "work" ? "#60798e" : "#7b9ad0");
+    const studentUniform = kind === "study" && state.age >= 6 && state.age < 18;
+    const medicalUniform = kind === "work" && /แพทย์|พยาบาล|สุขภาพ|หมอ/.test(state.job || "");
+    const body = studentUniform
+      ? "#e7e4d8"
+      : medicalUniform
+        ? "#78a69c"
+        : look.shirt || (kind === "work" ? "#60798e" : "#7b9ad0");
     const hair =
       look.hair ||
       (state.age < 24 ? "#334263" : state.age < 50 ? "#443852" : "#77705d");
@@ -704,10 +708,17 @@
     }
     rect(x - 15, floor - 44, 31, 28, palette.outline);
     rect(x - 12, floor - 42, 25, 24, jacket);
+    rect(x - 12, floor - 22, 25, 3, "#536780");
     rect(x - 2, floor - 41, 3, 21, kind === "study" ? "#d6e2d0" : "#efd09a");
+    rect(x - 5, floor - 44, 11, 4, studentUniform ? "#d2d0c7" : "#e6d7bd");
+    rect(x - 1, floor - 38, 2, 2, "#f3d38f");
+    rect(x - 1, floor - 32, 2, 2, "#f3d38f");
     rect(x - 17, floor - 42, 7, 20, palette.outline);
+    rect(x - 15, floor - 40, 5, 16, jacket);
     rect(x - 19, floor - 38 + (frame ? 1 : 0), 6, 17, skin);
     rect(x + 11, floor - 40 + (frame ? -1 : 1), 7, 17, skin);
+    rect(x - 19, floor - 24, 6, 3, skin);
+    rect(x + 12, floor - 24, 6, 3, skin);
     if (seated) {
       rect(x - 20, floor - 35, 7, 13, skin);
       rect(x + 13, floor - 35, 7, 13, skin);
@@ -716,12 +727,16 @@
     } else if (kind === "cook") {
       rect(x + 13, floor - 40, 12, 7, skin);
       rect(x + 22, floor - 34, 8, 4, skin);
+      rect(x - 10, floor - 40, 20, 4, "#f0e9d8");
+      rect(x - 4, floor - 38, 9, 17, "#e9e2d0");
     } else if (kind === "exercise") {
       rect(x - 23 + (frame ? 3 : 0), floor - 37, 9, 8, skin);
       rect(x + 13 - (frame ? 3 : 0), floor - 35, 10, 8, skin);
     }
     rect(x - 14, floor - 69, 28, 27, palette.outline);
     rect(x - 12, floor - 67, 24, 23, skin);
+    rect(x - 15, floor - 61, 4, 7, skin);
+    rect(x + 12, floor - 61, 4, 7, skin);
 
     // Anime fringe, side locks, bright eyes, and blush details.
     rect(x - 15, floor - 75, 31, 17, palette.outline);
@@ -749,7 +764,10 @@
     rect(x + 5, floor - 60, 3, 4, palette.eye);
     rect(x - 10, floor - 52, 4, 2, "#e89691");
     rect(x + 7, floor - 52, 4, 2, "#e89691");
+    rect(x - 1, floor - 56, 2, 3, "#d9957e");
     rect(x - 1, floor - 50, 3, 2, "#a65f63");
+    rect(x - 11, floor - 72, 5, 3, "#7285a7");
+    rect(x + 6, floor - 72, 6, 3, "#7285a7");
     if (look.accessory === "glasses") {
       rect(x - 9, floor - 62, 10, 7, "#d9d4c5");
       rect(x + 2, floor - 62, 10, 7, "#d9d4c5");
@@ -808,14 +826,22 @@
   function drawAnimeCharacter(x, floor, state, frame) {
     const age = Number(state.age || 0);
     if (age < 1.5) {
+      context.save();
+      context.translate(x * -0.12, floor * -0.12);
+      context.scale(1.12, 1.12);
       drawBabySprite(x, floor, state);
+      context.restore();
       return;
     }
     if (state.activity.kind === "rest") {
+      context.save();
+      context.translate(x * -0.14, floor * -0.14);
+      context.scale(1.14, 1.14);
       drawRestingSprite(x, floor, state, frame);
+      context.restore();
       return;
     }
-    const scale = age < 6 ? 0.55 : age < 13 ? 0.72 : age < 17 ? 0.88 : age >= 70 ? 0.92 : 1;
+    const scale = age < 6 ? 0.68 : age < 13 ? 0.82 : age < 17 ? 0.96 : age >= 70 ? 1.02 : 1.08;
     context.save();
     context.translate(x * (1 - scale), floor * (1 - scale));
     context.scale(scale, scale);
