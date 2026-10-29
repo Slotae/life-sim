@@ -3076,7 +3076,7 @@ body {
 @media (max-width: 760px) {
   .shell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px; }
   .top, .head, .activity, .stats, .right, .lifeDetails, .journalPanel { grid-column: 1; }
-  .top { grid-row: 1; }
+  .top { grid-row: 1; gap: 10px; }
   .head { grid-row: 2; }
   .activity { grid-row: 3; }
   .right { grid-row: 4; }
@@ -3086,7 +3086,12 @@ body {
   .actFrame { aspect-ratio: 12 / 7; }
   .right { padding: 17px; }
   .options .opt { min-height: 64px; }
-  .lifeDetailsGrid { grid-template-columns: 1fr 1fr; }
+  .lifeDetailsGrid { grid-template-columns: minmax(0, 1fr); }
+  .lifeDetails .systems { grid-column: auto; }
+  .lifeDetails .systemBoard { grid-template-columns: minmax(0, 1fr); }
+  .controls { min-width: 0; flex-wrap: wrap; }
+  .journalPanel > summary { grid-template-columns: 23px auto minmax(0, 1fr); }
+  .journalPanel > summary span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 @media (max-width: 520px) {
   .shell { padding: 10px; gap: 10px; }
