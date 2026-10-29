@@ -166,6 +166,9 @@
     rect(19, 31, 59, 8, "#dce9e5");
     rect(295, 49, 68, 6, "#dce9e5");
     rect(308, 42, 38, 8, "#dce9e5");
+    if (!urban && villageLayers[0]?.complete && villageLayers[0].naturalWidth) {
+      context.drawImage(villageLayers[0], 0, 0, 576, 150, 0, 0, 480, 125);
+    }
     if (night) rect(413, 20, 15, 15, "#f4e8be");
     else rect(410, 18, 23, 23, "#ffe39b");
 
@@ -232,11 +235,15 @@
         rect(x + (seed % 11), 137, 2, 24, "#c4cf79");
         rect(x + 9, 159, 2, 25, "#d9d586");
       }
-      rect(52, 80, 7, 64, "#76513d");
-      rect(29, 78, 51, 8, "#76513d");
-      rect(23, 71, 60, 8, "#4f7f54");
-      rect(26, 63, 48, 9, "#5f925b");
-      rect(36, 55, 37, 9, "#6a9f61");
+      if (villageLayers[2]?.complete && villageLayers[2].naturalWidth) {
+        context.drawImage(villageLayers[2], 92, 0, 162, 145, 0, 4, 162, 145);
+      } else {
+        rect(52, 80, 7, 64, "#76513d");
+        rect(29, 78, 51, 8, "#76513d");
+        rect(23, 71, 60, 8, "#4f7f54");
+        rect(26, 63, 48, 9, "#5f925b");
+        rect(36, 55, 37, 9, "#6a9f61");
+      }
       // Thai timber house on stilts, with a layered gable roof and shaded porch.
       rect(197, 88, 151, 49, "#c89158");
       rect(186, 81, 174, 11, "#774c46");
@@ -570,112 +577,231 @@
     }
   }
 
-  function drawKitchenScene(location, hour, colors, seed, season, urban) {
-    drawIndoorBackground("home", location, hour, colors, seed, season, urban);
-    rect(0, 0, 480, 145, "#e8dcc5");
-    // Kitchen window, hanging pans, tiled backsplash, and a stove.
-    drawWindow(location, hour, colors, seed, season, urban);
-    rect(294, 25, 166, 80, "#e8dfcd");
-    for (let y = 31; y < 103; y += 18)
-      for (let x = 301 + (y % 2) * 8; x < 457; x += 24)
-        rect(x, y, 1, 1, "#a9aa99");
-    rect(300, 106, 169, 12, "#9a7055");
-    rect(312, 118, 11, 36, "#725849");
-    rect(445, 118, 11, 36, "#725849");
-    rect(344, 122, 43, 22, "#4b5257");
-    rect(349, 117, 33, 7, "#b7c3b4");
-    rect(352, 128, 9, 5, "#d39b69");
-    rect(371, 128, 9, 5, "#d39b69");
-    rect(400, 91, 41, 15, "#d09a67");
-    rect(410, 84, 20, 7, "#91a56b");
-    // Rice cooker, jars and hanging utensils make this a lived-in Thai kitchen.
-    rect(34, 28, 116, 72, "#927353");
-    rect(40, 34, 104, 60, "#c9a675");
-    for (let y = 43; y < 87; y += 21) {
-      rect(44, y, 96, 3, "#795b48");
-      rect(53, y - 11, 15, 10, "#c77c5f");
-      rect(78, y - 14, 20, 13, "#e4d2a5");
-      rect(108, y - 12, 17, 11, "#779682");
+  function drawThaiRoomBase(location, hour, room, urban) {
+    const city = location?.city || "กรุงเทพฯ";
+    const north = city === "เชียงใหม่" || city === "อุดรธานี";
+    const south = city === "ภูเก็ต";
+    const rural = urban !== true;
+    const wall = room === "bedroom" ? (north ? "#b3916f" : "#d9cdb1") : north ? "#b48f68" : south ? "#d8dfd1" : "#e5d7bb";
+    const floor = rural || north ? "#806044" : south ? "#a48c72" : "#8b7567";
+    rect(0, 0, 480, 200, wall);
+    if (rural || north) {
+      for (let y = 8; y < 146; y += 17) {
+        rect(0, y, 480, 2, y % 3 ? "#c4a276" : "#98724f");
+        for (let x = (y * 3) % 31; x < 480; x += 62) rect(x, y + 2, 2, 14, "#997351");
+      }
+    } else if (south) {
+      rect(0, 12, 480, 7, "#f0ead7");
+      rect(35, 28, 118, 92, "#7d8d83");
+      rect(41, 34, 106, 80, "#91bac0");
+      for (let x = 51; x < 141; x += 18) rect(x, 34, 3, 80, "#e6dfc9");
+      rect(32, 119, 126, 6, "#805e48");
+    } else {
+      rect(0, 14, 480, 6, "#f2ead4");
+      rect(350, 25, 87, 24, "#c6d8d1");
+      rect(356, 31, 75, 12, hour < 6 || hour >= 19 ? "#52617b" : "#91b9c5");
+      rect(305, 20, 42, 8, "#d3c4aa");
+      rect(311, 28, 4, 18, "#786e64");
     }
-    rect(383, 116, 44, 28, "#e4e4d8");
-    rect(389, 111, 32, 7, "#faf2dc");
-    rect(396, 120, 17, 3, "#8c9b94");
-    rect(396, 132, 18, 3, "#bd7466");
-    rect(300, 52, 4, 38, "#70594a");
-    rect(293, 83, 18, 6, "#b2a080");
-    rect(326, 54, 4, 35, "#70594a");
-    rect(319, 82, 18, 6, "#b2a080");
-    rect(348, 49, 6, 16, "#806c56");
-    rect(341, 64, 20, 5, "#c0a77a");
-    for (let x = 12; x < 480; x += 42) rect(x, 161, 2, 33, "#9c7960");
+    rect(0, 150, 480, 50, floor);
+    rect(0, 148, 480, 5, rural ? "#c5a273" : "#d5bd91");
+    for (let x = 5; x < 480; x += 54) rect(x, 177 + (x % 3), 2, 23, rural ? "#a17e59" : "#a48a71");
+    if (north) {
+      rect(20, 34, 37, 68, "#5d4a40");
+      rect(24, 39, 29, 59, "#31485a");
+      rect(32, 48, 14, 40, "#23364b");
+      rect(371, 30, 73, 54, "#744e48");
+      rect(377, 36, 61, 42, "#334c55");
+      rect(381, 69, 53, 8, "#b27455");
+      rect(387, 47, 41, 21, "#b18459");
+    } else if (rural) {
+      rect(396, 23, 60, 81, "#694c3a");
+      rect(402, 29, 48, 69, "#91a890");
+      rect(409, 36, 32, 54, "#617d69");
+    } else {
+      rect(20, 37, 100, 56, "#775843");
+      rect(26, 43, 88, 44, "#e1c99a");
+      rect(33, 49, 74, 32, south ? "#6da1a2" : "#6f93a1");
+      rect(33, 70, 74, 11, "#698a68");
+      rect(58, 58, 7, 12, "#bd8069");
+      rect(80, 55, 8, 15, "#55536c");
+    }
+    if (room === "kitchen") {
+      rect(0, 110, 480, 40, "#d4c5a8");
+      rect(0, 108, 480, 5, "#f0e7d1");
+      for (let y = 115; y < 148; y += 16)
+        for (let x = 0; x < 480; x += 31) rect(x, y, 30, 1, "#b8ad98");
+    }
   }
 
-  function drawLivingRoomScene(location, hour, colors, seed, season, urban) {
-    drawIndoorBackground("home", location, hour, colors, seed, season, urban);
-    rect(0, 0, 480, 145, "#e8dcc5");
-    drawWindow(location, hour, colors, seed, season, urban);
-    rect(0, 145, 480, 55, "#876b5c");
-    rect(284, 119, 138, 28, "#668078");
-    rect(276, 111, 151, 16, "#8caa99");
-    rect(287, 145, 10, 14, "#594e4d");
-    rect(409, 145, 10, 14, "#594e4d");
-    rect(151, 148, 158, 8, "#9a7557");
-    rect(163, 156, 8, 20, "#665448");
-    rect(291, 156, 8, 20, "#665448");
-    rect(181, 138, 29, 10, "#d9bd8b");
-    rect(225, 140, 34, 8, "#8da296");
-    rect(40, 114, 9, 31, "#795a45");
-    rect(28, 104, 32, 12, "#8cad77");
-    rect(31, 94, 25, 10, "#7b9b68");
-    // Family photo, curtains, cushions and a tea tray make this Thai home feel lived in.
-    rect(350, 30, 53, 44, "#8a674e");
-    rect(355, 35, 43, 34, "#e1c999");
-    rect(359, 39, 35, 26, "#91b7b7");
-    rect(360, 53, 33, 12, "#72875f");
-    rect(369, 46, 7, 8, "#bd806b");
-    rect(380, 43, 7, 10, "#58617b");
-    rect(24, 37, 14, 59, "#bc8065");
-    rect(64, 37, 14, 59, "#bc8065");
-    rect(31, 39, 40, 8, "#d9b17a");
-    rect(298, 122, 29, 12, "#d5a274");
-    rect(385, 122, 27, 12, "#d5a274");
-    rect(178, 136, 36, 6, "#845a43");
-    rect(184, 132, 9, 5, "#e2d2b2");
-    rect(198, 132, 9, 5, "#d99070");
-    for (let x = 12; x < 480; x += 48) rect(x, 181, 2, 19, "#9a7966");
+  function drawKitchenScene(location, hour, colors, seed, season, urban) {
+    drawThaiRoomBase(location, hour, "kitchen", urban);
+    // The kitchen is its own little stage: pantry, cooker, wok, herbs and plastic stool.
+    rect(24, 28, 128, 74, "#7e5940");
+    rect(31, 34, 114, 62, "#b99668");
+    rect(37, 42, 103, 3, "#704f3b");
+    rect(44, 47, 16, 15, "#be795b");
+    rect(69, 47, 18, 15, "#e5d7b7");
+    rect(100, 47, 18, 15, "#708d7b");
+    rect(44, 72, 16, 16, "#ddbd7f");
+    rect(69, 72, 18, 16, "#768b82");
+    rect(100, 72, 18, 16, "#c17b62");
+    rect(185, 28, 105, 5, "#845d43");
+    rect(199, 33, 6, 23, "#594b41");
+    rect(217, 34, 7, 19, "#74604d");
+    rect(241, 32, 6, 25, "#9d7251");
+    rect(196, 56, 13, 3, "#d1b58c");
+    rect(215, 52, 18, 3, "#c3a980");
+    rect(238, 57, 13, 3, "#d1b58c");
+    rect(34, 111, 413, 12, "#79543c");
+    rect(43, 123, 12, 27, "#5d483d");
+    rect(420, 123, 12, 27, "#5d483d");
+    rect(288, 96, 78, 14, "#49464b");
+    rect(296, 89, 62, 8, "#c7c5b8");
+    rect(301, 93, 20, 3, "#e79c58");
+    rect(333, 93, 18, 3, "#e79c58");
+    rect(381, 77, 49, 34, "#e0e1d4");
+    rect(387, 70, 37, 9, "#f2eddb");
+    rect(397, 81, 17, 4, "#749186");
+    rect(400, 91, 12, 4, "#cf7760");
+    rect(164, 123, 54, 28, "#6b5041");
+    rect(170, 116, 42, 8, "#9c7354");
+    rect(171, 127, 40, 18, "#c78e57");
+    rect(175, 130, 32, 11, "#e4b86d");
+    rect(180, 132, 4, 4, "#b75d4f");
+    rect(190, 130, 4, 5, "#71935e");
+    rect(200, 133, 5, 4, "#e0d09e");
+    rect(365, 151, 45, 7, "#b27956");
+    rect(369, 158, 6, 21, "#755441");
+    rect(400, 158, 6, 21, "#755441");
+  }
+
+  function drawLivingRoomScene(location, hour, colors, seed, season, urban, age = 20) {
+    drawThaiRoomBase(location, hour, "living", urban);
+    // Family room props replace the repeated window backdrop with local furniture and keepsakes.
+    rect(275, 108, 157, 35, "#65847b");
+    rect(266, 101, 173, 18, "#8eaa96");
+    rect(279, 140, 12, 14, "#59483d");
+    rect(408, 140, 12, 14, "#59483d");
+    const regionalRoom = ["เชียงใหม่", "อุดรธานี", "ภูเก็ต"].includes(location?.city);
+    const photoX = regionalRoom ? 169 : 39;
+    rect(photoX, 41, 88, 59, "#795943");
+    rect(photoX + 6, 47, 76, 47, "#e3d2ac");
+    rect(photoX + 12, 53, 64, 34, "#8ab8bb");
+    rect(photoX + 13, 76, 62, 11, "#66875d");
+    rect(photoX + 24, 63, 8, 13, "#bd7d66");
+    rect(photoX + 40, 59, 8, 17, "#4e526a");
+    rect(photoX + 57, 65, 8, 11, "#d2a26d");
+    if (age < 1.5) {
+      // Newborns rest in a proper cot with a light blanket and a hanging mobile.
+      rect(184, 136, 120, 9, "#77543e");
+      rect(190, 144, 108, 23, "#d4c09a");
+      rect(197, 147, 94, 12, "#e9e1cb");
+      rect(203, 140, 82, 5, "#ad8a60");
+      rect(212, 127, 6, 9, "#815d43");
+      rect(210, 134, 10, 3, "#d3b577");
+      rect(239, 124, 6, 12, "#8d6e50");
+      rect(236, 131, 12, 3, "#9a7e55");
+      rect(270, 128, 6, 8, "#ba7c67");
+      rect(266, 134, 13, 3, "#d5b678");
+      rect(188, 165, 111, 8, "#77543e");
+      rect(193, 172, 8, 7, "#604839");
+      rect(286, 172, 8, 7, "#604839");
+    } else {
+      rect(151, 148, 159, 8, "#9a7557");
+      rect(161, 156, 9, 23, "#624d40");
+      rect(291, 156, 9, 23, "#624d40");
+      rect(176, 139, 42, 8, "#845841");
+      rect(181, 134, 10, 5, "#e2d3b4");
+      rect(198, 133, 10, 6, "#ce8a68");
+      rect(226, 137, 23, 8, "#879b87");
+    }
+    rect(38, 116, 17, 34, "#76563e");
+    rect(27, 108, 39, 12, "#cc986b");
+    rect(32, 99, 30, 12, "#6c9865");
+    rect(39, 91, 17, 9, "#86ad70");
+    // Fan and woven mat identify a lived-in Thai home; architecture shifts by region above.
+    rect(442, 90, 5, 43, "#756149");
+    rect(427, 82, 34, 4, "#78664f");
+    rect(430, 69, 27, 3, "#78664f");
+    rect(438, 73, 4, 19, "#b5ab91");
+    rect(130, 173, 223, 13, urban ? "#b38b58" : "#c1a16b");
+    for (let x = 139; x < 348; x += 17) rect(x, 176, 2, 7, x % 2 ? "#6d7c5f" : "#d7bd83");
   }
 
   function drawBedroomScene(location, hour, colors, seed, season, urban) {
-    drawIndoorBackground("home", location, hour, colors, seed, season, urban);
-    rect(0, 0, 480, 145, "#d9d2c6");
-    drawWindow(location, hour, colors, seed, season, urban);
-    rect(0, 145, 480, 55, "#79665c");
-    rect(271, 117, 167, 37, "#574f5a");
-    rect(280, 108, 151, 36, "#d8d8ca");
-    rect(286, 112, 59, 17, "#91aeb1");
-    rect(345, 129, 91, 15, hour < 6 || hour >= 20 ? "#536b7d" : "#b89d7b");
-    rect(266, 146, 177, 9, "#8c6d56");
-    rect(281, 155, 9, 18, "#665248");
-    rect(420, 155, 9, 18, "#665248");
-    rect(218, 128, 42, 18, "#a9835f");
-    rect(223, 134, 31, 10, "#d8b984");
-    rect(228, 129, 23, 5, "#e9dfc4");
-    rect(43, 115, 8, 30, "#745b48");
-    rect(31, 106, 32, 11, "#90aa78");
-    // Patchwork quilt, bedside lamp, books and slippers make this room read as a bedroom.
-    rect(295, 113, 132, 8, "#81989c");
-    for (let x = 298; x < 420; x += 18) {
-      rect(x, 121, 12, 7, x % 2 ? "#d5bd87" : "#a9b5a0");
-      rect(x + 5, 130, 10, 7, x % 3 ? "#b88070" : "#81989c");
-    }
-    rect(226, 107, 24, 20, "#7e5e47");
-    rect(231, 99, 14, 9, "#e6cc84");
-    rect(235, 104, 6, 5, "#fff0bc");
-    rect(294, 157, 19, 5, "#b98968");
-    rect(319, 157, 19, 5, "#b98968");
-    rect(360, 83, 56, 15, "#a98c70");
-    rect(366, 86, 44, 8, "#e4dac3");
-    for (let x = 15; x < 480; x += 48) rect(x, 183, 2, 17, "#938071");
+    drawThaiRoomBase(location, hour, "bedroom", urban);
+    rect(263, 112, 181, 42, "#554c55");
+    rect(270, 102, 167, 43, "#d5cfbb");
+    rect(280, 107, 61, 17, "#a3bac0");
+    rect(344, 108, 85, 34, hour < 6 || hour >= 20 ? "#50647c" : "#b5a17f");
+    for (let i = 0; i < 6; i++) rect(349 + i * 13, 114 + (i % 2) * 10, 8, 7, i % 2 ? "#b57b70" : "#d6c385");
+    rect(259, 148, 190, 8, "#8d6a4d");
+    rect(273, 156, 11, 21, "#604a3d");
+    rect(426, 156, 11, 21, "#604a3d");
+    rect(32, 43, 82, 105, "#79573e");
+    rect(39, 50, 68, 91, "#d1b982");
+    rect(44, 57, 58, 4, "#785b43");
+    rect(44, 83, 58, 4, "#785b43");
+    rect(44, 110, 58, 4, "#785b43");
+    rect(51, 66, 17, 14, "#e5e0d3");
+    rect(73, 66, 21, 14, "#5b6e87");
+    rect(52, 93, 39, 14, "#c17b67");
+    rect(228, 115, 24, 31, "#735341");
+    rect(222, 108, 36, 8, "#9c7652");
+    rect(230, 101, 20, 8, "#f0d88f");
+    rect(236, 106, 8, 7, "#fff0b4");
+    rect(112, 154, 48, 28, "#556573");
+    rect(117, 159, 38, 18, "#c9d4d0");
+    rect(121, 162, 30, 12, "#83a3a0");
+    rect(310, 158, 16, 5, "#b78c66");
+    rect(335, 158, 16, 5, "#b78c66");
+    rect(170, 45, 58, 12, "#806c55");
+    rect(179, 48, 41, 6, "#ecdfbf");
+  }
+
+  function drawThaiFoodStall(location, hour, colors, seed, urban) {
+    drawThaiLocation(location, hour, colors, seed, 0, urban);
+    rect(0, 122, 480, 78, "#484149");
+    rect(22, 43, 218, 10, "#62463e");
+    for (let i = 0; i < 6; i++) rect(28 + i * 35, 52, 32, 45, ["#d77c62", "#e1bd78", "#709184"][i % 3]);
+    rect(21, 94, 222, 12, "#76533f");
+    rect(31, 106, 11, 45, "#59473d");
+    rect(222, 106, 11, 45, "#59473d");
+    rect(251, 81, 90, 57, "#4d4849");
+    rect(258, 89, 75, 43, "#b77c53");
+    rect(269, 96, 54, 7, "#d9c28f");
+    rect(276, 105, 41, 4, "#a65046");
+    rect(283, 113, 34, 4, "#699054");
+    rect(369, 88, 13, 38, "#d19e69");
+    rect(385, 94, 14, 32, "#d79c60");
+    rect(404, 85, 14, 41, "#d2b47e");
+    rect(365, 126, 60, 9, "#d3b98a");
+    rect(38, 159, 90, 8, "#9b604d");
+    rect(43, 167, 9, 22, "#3d3941");
+    rect(111, 167, 9, 22, "#3d3941");
+    rect(344, 152, 83, 8, "#99604c");
+    rect(351, 160, 8, 24, "#3d3941");
+    rect(411, 160, 8, 24, "#3d3941");
+  }
+
+  function drawThaiPark(location, hour, colors, seed, urban) {
+    drawThaiLocation(location, hour, colors, seed, 0, urban);
+    rect(0, 123, 480, 77, "#609265");
+    rect(0, 164, 480, 36, "#cfb285");
+    rect(0, 164, 480, 7, "#e3d3a8");
+    rect(43, 58, 13, 81, "#74533e");
+    rect(24, 48, 56, 10, "#74533e");
+    for (const [x, y, w, color] of [[11, 39, 64, "#56835a"], [35, 30, 68, "#67945f"], [66, 43, 54, "#497b53"], [390, 47, 68, "#56835a"], [414, 34, 62, "#6b955f"]]) rect(x, y, w, 17, color);
+    rect(163, 132, 8, 29, "#806048");
+    rect(207, 132, 8, 29, "#806048");
+    rect(151, 126, 76, 7, "#d3a96d");
+    rect(150, 126, 8, 28, "#ae7651");
+    rect(225, 126, 8, 28, "#ae7651");
+    rect(306, 122, 9, 36, "#715640");
+    rect(290, 117, 44, 8, "#8eaa73");
+    rect(345, 145, 38, 17, "#9fc0be");
+    rect(351, 140, 25, 6, "#e9e3d0");
   }
 
   function drawTravelScene(location, hour, colors, seed, urban) {
@@ -860,7 +986,7 @@
     } else if (scene === "care") {
       drawCareScene(location, hour, colors, seed, season, urban);
     } else {
-      drawLivingRoomScene(location, hour, colors, seed, season, urban);
+      drawLivingRoomScene(location, hour, colors, seed, season, urban, state.age);
     }
   }
 
@@ -903,178 +1029,204 @@
     return { x: 242, y: 157, seated: false };
   }
 
-  function drawCharacterBody(x, floor, state, frame) {
-    const { kind } = state.activity;
+  const heroPixels = [
+    "......KKKK......",
+    "....KKHHHHKK....",
+    "...KHHHHHHHHK...",
+    "...KHHKKHHKKHK..",
+    "...KKSSSSSSKK...",
+    "..KSSSESSSESSSK.",
+    "..KSSSKSSSKSSSK.",
+    "...KSSSSMSSSK...",
+    "....KKKKKKKK....",
+    ".......SSS......",
+    "....KKCCCCCCKK....",
+    "...KCCCCCCCCCCK...",
+    "..KKACCCCCCCCAKK..",
+    "..KACCCWWCCCAK....",
+    "..KACCCCCCCCAK....",
+    "..KACCCWCCCAK.....",
+    "..KACCCCCCCCAK....",
+    "..KACCCCCCCCAK....",
+    "...KKCCCCCCKK.....",
+    "....KKCCCCCCK.....",
+    ".....KKPPKK.....",
+    ".....KPPPPK.....",
+    ".....KPPPPK.....",
+    ".....KPPPPK.....",
+    "...KKKPPPPKKK...",
+    "...KPPPPPPPPK...",
+    "...KPPPPPPPPK...",
+    "...KPPPP..PPK...",
+    "...KPPPP..PPK...",
+    "..KKPP....PPKK..",
+    "..KBB......BBK..",
+    "..KK........KK..",
+  ];
+  const seatedLegs = [
+    ".....KKPPKK.....",
+    "....KKPPPPKK....",
+    "...KKPP..PPKK...",
+    "...KPP....PPK...",
+    "..KKBB....BBKK..",
+    "..KBB......BBK..",
+  ];
+  const babyPixels = [
+    "......HHHH......",
+    "....HHHHHHHH....",
+    "...HHKKHHKKHH...",
+    "..HKHHHHHHHHKH..",
+    "..KKSSSSSSSSKK..",
+    ".KSSSEEESSEESSSK.",
+    ".KSSSEKSSSKE SSK.",
+    "..KSSSSMMMMSSK...",
+    "...KKKKKKKK......",
+    ".....SSSS.........",
+    "...KKCCCCKK.......",
+    "..KCCCCCCCCK......",
+    "...KCCCCCCK.......",
+    "....KKKKKK........",
+  ].map((row) => row.replaceAll(" ", ""));
+  const sleepingPixels = [
+    "........................HHHHHHHH........",
+    ".....................HHHHHHHHHHHH.......",
+    "....................KKSSSSSSSSSSKK.......",
+    "...................KSSSSSEEESSESSSK......",
+    "...................KSSSSSSMMMMSSSSK......",
+    "....................KKKKKKKKKKKKKK........",
+    "...KKKKKKKKKKKKKKKKKKCCCCCCCCCCCCCCKK.....",
+    "..KWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWK....",
+    ".KWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWK...",
+    "..KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK....",
+  ];
+
+  function pixelColorMap(state) {
     const look = state.character || {};
-    const step = kind === "commute" || kind === "travel" ? (frame ? 3 : -2) : 0;
-    const studentUniform = kind === "study" && state.age >= 6 && state.age < 18;
-    const medicalUniform = kind === "work" && /แพทย์|พยาบาล|สุขภาพ|หมอ/.test(state.job || "");
-    const body = studentUniform
-      ? "#e7e4d8"
-      : medicalUniform
-        ? "#78a69c"
-        : look.shirt || (kind === "work" ? "#60798e" : "#7b9ad0");
-    const hair =
-      look.hair ||
-      (state.age < 24 ? "#334263" : state.age < 50 ? "#443852" : "#77705d");
-    const skin = look.skin || palette.skin;
-    const jacket = kind === "commute" ? "#c17b67" : body;
-    const seated = state.seated;
-    rect(x - 21, floor + 1, 44, 4, "#403f4b");
+    const age = Number(state.age || 0);
+    const kind = state.activity?.kind || "home";
+    const student = (kind === "study" || state.event?.scene === "wai-khru") && age >= 6 && age < 18;
+    const doctor = kind === "work" && /แพทย์|พยาบาล|สุขภาพ|หมอ/.test(state.job || "");
+    const songkran = state.event?.scene === "songkran";
+    const shirt = student ? "#eee9db" : doctor ? "#8bbcaf" : songkran ? "#e7bc73" : look.shirt || "#8e9fc8";
+    const pants = student ? "#36486c" : "#485373";
+    const shade = (hex, amount) => {
+      const value = Number.parseInt(hex.slice(1), 16);
+      const channels = [value >> 16, (value >> 8) & 255, value & 255]
+        .map((channel) => Math.max(0, Math.min(255, channel + amount)));
+      return `#${channels.map((channel) => channel.toString(16).padStart(2, "0")).join("")}`;
+    };
+    return {
+      K: "#302b43",
+      H: age >= 62 ? "#c1b8a1" : look.hair || (age < 24 ? "#292b43" : age < 50 ? "#4b3747" : "#797064"),
+      h: shade(look.hair || "#40374d", 35),
+      S: look.skin || "#e8ad8c",
+      s: shade(look.skin || "#e8ad8c", -27),
+      E: "#fff1d0",
+      M: "#a65d68",
+      C: shirt,
+      c: shade(shirt, -30),
+      W: shade(shirt, 28),
+      P: pants,
+      p: shade(pants, 24),
+      B: "#282c41",
+      A: look.skin || "#e8ad8c",
+      G: "#bf8960",
+      R: "#bf5d5c",
+      T: "#f3d995",
+    };
+  }
 
-    // Shoes, legs, and jacket use one-pixel outlines to read like a small game sprite.
-    if (seated) {
-      rect(x - 12, floor - 24, 11, 11, "#34415b");
-      rect(x + 2, floor - 24, 11, 11, "#34415b");
-      rect(x - 15, floor - 15, 18, 5, "#242c42");
-      rect(x + 1, floor - 15, 18, 5, "#242c42");
-    } else {
-      rect(x - 12, floor - 18 + step, 10, 18, "#34415b");
-      rect(x + 2, floor - 18 - step, 10, 18, "#34415b");
-      rect(x - 15, floor - 3 + step, 15, 5, "#242c42");
-      rect(x + 1, floor - 3 - step, 16, 5, "#242c42");
-    }
-    rect(x - 15, floor - 44, 31, 28, palette.outline);
-    rect(x - 12, floor - 42, 25, 24, jacket);
-    rect(x - 12, floor - 22, 25, 3, "#536780");
-    rect(x - 2, floor - 41, 3, 21, kind === "study" ? "#d6e2d0" : "#efd09a");
-    rect(x - 5, floor - 44, 11, 4, studentUniform ? "#d2d0c7" : "#e6d7bd");
-    rect(x - 1, floor - 38, 2, 2, "#f3d38f");
-    rect(x - 1, floor - 32, 2, 2, "#f3d38f");
-    rect(x - 17, floor - 42, 7, 20, palette.outline);
-    rect(x - 15, floor - 40, 5, 16, jacket);
-    rect(x - 19, floor - 38 + (frame ? 1 : 0), 6, 17, skin);
-    rect(x + 11, floor - 40 + (frame ? -1 : 1), 7, 17, skin);
-    rect(x - 19, floor - 24, 6, 3, skin);
-    rect(x + 12, floor - 24, 6, 3, skin);
-    if (seated) {
-      rect(x - 20, floor - 35, 7, 13, skin);
-      rect(x + 13, floor - 35, 7, 13, skin);
-      rect(x - 15, floor - 24, 8, 4, skin);
-      rect(x + 8, floor - 24, 8, 4, skin);
-    } else if (kind === "cook") {
-      rect(x + 13, floor - 40, 12, 7, skin);
-      rect(x + 22, floor - 34, 8, 4, skin);
-      rect(x - 10, floor - 40, 20, 4, "#f0e9d8");
-      rect(x - 4, floor - 38, 9, 17, "#e9e2d0");
-    } else if (kind === "exercise") {
-      rect(x - 23 + (frame ? 3 : 0), floor - 37, 9, 8, skin);
-      rect(x + 13 - (frame ? 3 : 0), floor - 35, 10, 8, skin);
-    }
-    rect(x - 14, floor - 69, 28, 27, palette.outline);
-    rect(x - 12, floor - 67, 24, 23, skin);
-    rect(x - 15, floor - 61, 4, 7, skin);
-    rect(x + 12, floor - 61, 4, 7, skin);
+  function drawPixelMap(rows, centerX, bottomY, pixel, colors, bob = 0) {
+    const width = Math.max(...rows.map((row) => row.length));
+    const originX = Math.round(centerX - (width * pixel) / 2);
+    const originY = Math.round(bottomY - rows.length * pixel + bob);
+    rows.forEach((row, y) => {
+      const offset = Math.floor((width - row.length) / 2);
+      for (let x = 0; x < row.length; x++) {
+        const color = colors[row[x]];
+        if (color) rect(originX + (offset + x) * pixel, originY + y * pixel, pixel, pixel, color);
+      }
+    });
+  }
 
-    // Anime fringe, side locks, bright eyes, and blush details.
-    rect(x - 15, floor - 75, 31, 17, palette.outline);
-    rect(x - 12, floor - 74, 26, 13, hair);
-    rect(x - 15, floor - 70, 7, 18, hair);
-    rect(x + 9, floor - 71, 7, 21, hair);
+  function drawPixelCharacter(x, floor, state, frame) {
+    const age = Number(state.age || 0);
+    const kind = state.activity?.kind || "home";
+    const look = state.character || {};
+    const colors = pixelColorMap(state);
+    const scale = age < 6 ? 2.2 : age < 13 ? 2.4 : age < 17 ? 2.65 : 2.85;
+    const walking = ["commute", "travel"].includes(kind);
+    const bob = walking && frame ? -2 : 0;
+    if (kind === "rest") {
+      drawPixelMap(sleepingPixels, x + 4, floor - 20, 3, colors, frame ? 1 : 0);
+      return;
+    }
+    if (age < 1.5) {
+      const babyColors = { ...colors, C: look.shirt || "#9ab29b", c: "#718f7a", W: "#d9cfab", P: "#74899c", p: "#9eb0b7" };
+      drawPixelMap(babyPixels, x, floor + 1, 2.5, babyColors);
+      rect(x - 31, floor - 8, 62, 6, "#6f594d");
+      rect(x - 26, floor - 4, 6, 7, "#765c4c");
+      rect(x + 20, floor - 4, 6, 7, "#765c4c");
+      return;
+    }
+    const rows = state.seated
+      ? heroPixels.slice(0, 20).concat(seatedLegs)
+      : heroPixels;
+    const pixel = scale;
+    rect(x - 37, floor + 1, 74, 5, "#353545");
+    drawPixelMap(rows, x, floor, pixel, colors, bob);
+
+    const pixelAt = (dx, dy, color, w = pixel, h = pixel) => rect(x + dx, floor + dy, w, h, color);
+    pixelAt(-pixel * 3, -pixel * 27, colors.K, pixel, pixel * 2);
+    pixelAt(pixel, -pixel * 27, colors.K, pixel, pixel * 2);
     if (look.hairstyle === 1) {
-      rect(x - 17, floor - 58, 7, 24, hair);
-      rect(x + 12, floor - 58, 7, 27, hair);
-      rect(x - 9, floor - 78, 17, 5, hair);
+      pixelAt(-pixel * 7, -pixel * 28, colors.H, pixel, pixel * 6);
+      pixelAt(pixel * 6, -pixel * 28, colors.H, pixel, pixel * 6);
     } else if (look.hairstyle === 2) {
-      rect(x - 19, floor - 75, 7, 8, hair);
-      rect(x + 12, floor - 76, 8, 9, hair);
-      rect(x + 14, floor - 65, 5, 24, hair);
+      pixelAt(-pixel * 7, -pixel * 31, colors.H, pixel * 3, pixel * 2);
+      pixelAt(pixel * 4, -pixel * 31, colors.H, pixel * 3, pixel * 2);
     } else if (look.hairstyle === 3) {
-      rect(x - 18, floor - 78, 8, 8, hair);
-      rect(x + 10, floor - 78, 8, 8, hair);
-      rect(x - 8, floor - 77, 16, 6, hair);
+      pixelAt(-pixel * 2, -pixel * 31, colors.H, pixel * 4, pixel * 2);
     }
-    rect(x - 8, floor - 74, 7, 4, "#7785ab");
-    rect(x + 1, floor - 73, 8, 4, "#7785ab");
-    rect(x - 7, floor - 60, 5, 5, "#fff0c7");
-    rect(x + 4, floor - 60, 5, 5, "#fff0c7");
-    rect(x - 6, floor - 60, 3, 4, palette.eye);
-    rect(x + 5, floor - 60, 3, 4, palette.eye);
-    rect(x - 10, floor - 52, 4, 2, "#e89691");
-    rect(x + 7, floor - 52, 4, 2, "#e89691");
-    rect(x - 1, floor - 56, 2, 3, "#d9957e");
-    rect(x - 1, floor - 50, 3, 2, "#a65f63");
-    rect(x - 11, floor - 72, 5, 3, "#7285a7");
-    rect(x + 6, floor - 72, 6, 3, "#7285a7");
     if (look.accessory === "glasses") {
-      rect(x - 9, floor - 62, 10, 7, "#d9d4c5");
-      rect(x + 2, floor - 62, 10, 7, "#d9d4c5");
-      rect(x - 7, floor - 60, 6, 3, "#43566b");
-      rect(x + 4, floor - 60, 6, 3, "#43566b");
-      rect(x, floor - 60, 3, 1, "#e7d8b7");
+      pixelAt(-pixel * 5, -pixel * 27, "#dfd4ba", pixel * 4, pixel * 2);
+      pixelAt(pixel, -pixel * 27, "#dfd4ba", pixel * 4, pixel * 2);
+      pixelAt(-pixel * 4, -pixel * 26, "#42556b", pixel * 3, pixel);
+      pixelAt(pixel * 2, -pixel * 26, "#42556b", pixel * 3, pixel);
     }
-
-    if (kind === "commute") {
-      rect(x + 13, floor - 43, 14, 22, "#d4a86d");
-      rect(x + 16, floor - 41, 9, 3, "#f0d493");
+    if (kind === "cook") {
+      pixelAt(pixel * 5, -pixel * 17, colors.A, pixel * 4, pixel * 2);
+      pixelAt(pixel * 8, -pixel * 18, colors.K, pixel, pixel * 4);
+      pixelAt(pixel * 7, -pixel * 20, colors.p, pixel * 3, pixel);
+      pixelAt(-pixel * 4, -pixel * 6, colors.W, pixel * 8, pixel * 7);
+      pixelAt(-pixel * 3, -pixel * 4, colors.T, pixel * 6, pixel);
+    } else if (kind === "exercise") {
+      pixelAt(-pixel * 8, -pixel * 16, colors.A, pixel * 3, pixel * 6);
+      pixelAt(-pixel * 9, -pixel * 18, colors.C, pixel * 3, pixel * 2);
+      pixelAt(pixel * 5, -pixel * 16, colors.A, pixel * 3, pixel * 6);
+      pixelAt(pixel * 5, -pixel * 18, colors.C, pixel * 3, pixel * 2);
+    } else if (walking) {
+      pixelAt(-pixel * 8, -pixel * 18, colors.K, pixel * 5, pixel * 10);
+      pixelAt(-pixel * 7, -pixel * 17, colors.G, pixel * 3, pixel * 6);
+      pixelAt(-pixel * 6, -pixel * 14, colors.T, pixel * 2, pixel);
+    } else if (kind === "work" && /แพทย์|พยาบาล|สุขภาพ|หมอ/.test(state.job || "")) {
+      pixelAt(-pixel, -pixel * 15, colors.R, pixel * 2, pixel * 5);
+      pixelAt(-pixel * 2, -pixel * 14, colors.R, pixel * 4, pixel * 2);
     }
-    if (kind === "study") {
-      rect(x + 15, floor - 26, 9, 7, "#eee0b8");
-      rect(x + 17, floor - 25, 5, 1, "#7894a5");
+    if (state.event?.scene === "songkran") {
+      pixelAt(-pixel * 4, -pixel * 18, colors.R);
+      pixelAt(pixel * 3, -pixel * 17, colors.T);
+      pixelAt(pixel * 6, -pixel * 15, colors.W);
+      pixelAt(-pixel * 6, -pixel * 13, colors.W);
     }
-    if (kind === "rest" && !seated) {
-      rect(x - 7, floor - 3, 21, 3, "#d9b6a4");
+    if (state.seated) {
+      pixelAt(-pixel * 3, -pixel * 5, colors.A, pixel * 4, pixel * 2);
+      pixelAt(pixel, -pixel * 5, colors.A, pixel * 4, pixel * 2);
     }
-  }
-
-  function drawBabySprite(x, floor, state) {
-    const look = state.character || {};
-    const blanket = look.shirt || "#8fae91";
-    const skin = look.skin || palette.skin;
-    rect(x - 28, floor + 1, 54, 4, "#4d5946");
-    rect(x - 21, floor - 14, 5, 8, "#43505a");
-    rect(x + 12, floor - 14, 5, 8, "#43505a");
-    rect(x - 27, floor - 21, 53, 10, "#644f47");
-    rect(x - 24, floor - 26, 45, 12, "#d7bd8e");
-    rect(x - 21, floor - 24, 39, 7, blanket);
-    rect(x - 9, floor - 34, 20, 15, "#374255");
-    rect(x - 7, floor - 32, 16, 12, skin);
-    rect(x - 9, floor - 35, 21, 6, look.hair || "#3d3543");
-    rect(x - 5, floor - 27, 2, 2, "#3b4655");
-    rect(x + 3, floor - 27, 2, 2, "#3b4655");
-    rect(x - 25, floor - 19, 3, 7, "#e6d3ac");
-    rect(x + 18, floor - 19, 3, 7, "#e6d3ac");
-  }
-
-  function drawRestingSprite(x, floor, state, frame) {
-    const look = state.character || {};
-    const skin = look.skin || palette.skin;
-    rect(x - 37, floor - 29, 66, 13, "#343d53");
-    rect(x - 34, floor - 27, 59, 9, look.shirt || "#7899d5");
-    rect(x + 17, floor - 43, 20, 20, "#343d53");
-    rect(x + 19, floor - 41, 16, 16, skin);
-    rect(x + 16, floor - 45, 21, 7, look.hair || "#26324b");
-    rect(x + 12, floor - 38, 8, 15, look.hair || "#26324b");
-    rect(x + 24, floor - 35, 2, 2, "#263d62");
-    rect(x + 30, floor - 35, 2, 2, "#263d62");
-    rect(x - 2, floor - 25 + (frame ? 1 : 0), 18, 4, skin);
-    rect(x - 23, floor - 31, 25, 8, "#d7bd8e");
   }
 
   function drawAnimeCharacter(x, floor, state, frame) {
-    const age = Number(state.age || 0);
-    if (age < 1.5) {
-      context.save();
-      context.translate(x * -0.12, floor * -0.12);
-      context.scale(1.12, 1.12);
-      drawBabySprite(x, floor, state);
-      context.restore();
-      return;
-    }
-    if (state.activity.kind === "rest") {
-      context.save();
-      context.translate(x * -0.14, floor * -0.14);
-      context.scale(1.14, 1.14);
-      drawRestingSprite(x, floor, state, frame);
-      context.restore();
-      return;
-    }
-    const scale = age < 6 ? 0.68 : age < 13 ? 0.82 : age < 17 ? 0.96 : age >= 70 ? 1.02 : 1.08;
-    context.save();
-    context.translate(x * (1 - scale), floor * (1 - scale));
-    context.scale(scale, scale);
-    drawCharacterBody(x, floor, state, frame);
-    context.restore();
+    drawPixelCharacter(x, floor, state, frame);
   }
 
   function draw(timestamp, state) {
@@ -1110,21 +1262,10 @@
       if (urban) drawSkyline(location, hour, colors, seed);
       rect(0, 153, 480, 47, "#565d60");
       rect(0, 153, 480, 5, "#e1d4b4");
-    } else if (kind === "exercise" || kind === "lunch") {
-      if (urban) drawSkyline(location, hour, colors, seed);
-      else drawCozyVillage(location, hour, colors, seed, season, urban);
-      if (kind === "exercise") {
-        rect(35, 129, 7, 34, "#795c45");
-        rect(17, 120, 42, 10, "#bd805c");
-        rect(15, 130, 48, 4, "#e4c28b");
-        rect(368, 127, 7, 38, "#795c45");
-        rect(349, 117, 44, 11, "#86a46c");
-      } else {
-        rect(324, 111, 129, 30, "#875a49");
-        rect(317, 105, 143, 8, "#d2a46f");
-        rect(332, 119, 91, 4, "#e7d4aa");
-        rect(343, 128, 62, 4, "#9cae92");
-      }
+    } else if (kind === "exercise") {
+      drawThaiPark(location, hour, colors, seed, urban);
+    } else if (kind === "lunch") {
+      drawThaiFoodStall(location, hour, colors, seed, urban);
     } else {
       drawLivingRoomScene(location, hour, colors, seed, season, urban);
     }
@@ -1164,6 +1305,12 @@
         activity: { kind: "work" },
         character: { ...state.character, shirt: "#f0ede1", hairstyle: 0, accessory: "none" },
       }, Math.floor(timestamp / 350) % 2);
+    }
+    if (!eventScene && state.age < 1.5 && ["family", "home"].includes(kind)) {
+      rect(188, 156, 4, 15, "#92724f");
+      rect(295, 156, 4, 15, "#92724f");
+      for (let x = 199; x < 291; x += 11) rect(x, 155, 3, 14, "#a4825c");
+      rect(185, 153, 122, 4, "#d2b27c");
     }
     // Foreground highlights make the scene feel like a framed anime game cutaway.
     rect(0, 0, 480, 3, "#202b3d");
