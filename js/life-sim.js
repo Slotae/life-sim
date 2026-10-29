@@ -104,14 +104,16 @@ function ageEventData() {
       ],
     },
     {
-      age: 8,
+      age: 6,
       icon: "book",
       title: "จะได้เข้าเรียนหรือไม่?",
       desc: "ค่าใช้จ่าย ระยะทาง และรายได้ของบ้านอาจทำให้การเรียนไม่ใช่ทางเลือกที่ทุกครอบครัวเข้าถึงได้",
       options: [
         {
-          label: "ขอให้ครอบครัวส่งไปโรงเรียน",
-          sub: "โอกาสขึ้นอยู่กับการเข้าถึงการศึกษาและฐานะของบ้าน",
+          label: origin.iso === "THA" ? "เข้าโรงเรียนรัฐใกล้บ้าน · ป.1" : "เข้าโรงเรียนรัฐใกล้บ้าน",
+          sub: origin.iso === "THA"
+            ? "ไม่เก็บค่าเล่าเรียน · ยังมีค่าชุด อุปกรณ์ และเดินทาง"
+            : "ค่าเล่าเรียนต่ำ · ยังมีค่าอุปกรณ์และการเดินทาง",
           action: "school",
           application: {
             kind: "study",
@@ -120,6 +122,7 @@ function ageEventData() {
           },
           delta: [0, -2, 8, 1, -2],
           log: "ได้เริ่มเรียนชั้นประถมศึกษา",
+          lesson: "โอกาสเรียนรู้สำคัญกว่าชื่อเสียงของโรงเรียน",
         },
         {
           label: "ช่วยงานที่บ้านก่อน",
@@ -127,6 +130,7 @@ function ageEventData() {
           action: "family-work",
           delta: [0, 1, -2, 6, 3],
           log: "ช่วยครอบครัวทำงานและยังไม่ได้เข้าเรียน",
+          lesson: "การช่วยบ้านมีคุณค่า แต่เด็กก็ควรได้โอกาสเรียนรู้",
         },
         {
           label: "เรียนกับญาติหรือศูนย์ใกล้บ้าน",
@@ -134,6 +138,141 @@ function ageEventData() {
           action: "informal-school",
           delta: [0, 0, 4, 2, 0],
           log: "เรียนทักษะพื้นฐานกับคนในชุมชน",
+          lesson: "การเรียนรู้เกิดขึ้นได้หลายทาง ไม่ได้มีแค่ในห้องเรียน",
+        },
+        {
+          label: origin.iso === "THA" ? "สอบชิงทุนโรงเรียนประจำอำเภอ" : "สมัครทุนโรงเรียนคัดเลือก",
+          sub: "ใช้ผลการเรียนและทักษะ · ถ้าไม่ผ่านยังเลือกโรงเรียนใกล้บ้านได้",
+          action: "scholarship-school",
+          application: {
+            kind: "study",
+            threshold: 35,
+            fallbackIndex: 2,
+            subject: "คัดเลือกทุนการศึกษา",
+          },
+          delta: [-1, -1, 9, 2, 0],
+          log: "สอบชิงทุนเพื่อเข้าเรียนในโรงเรียนที่มีโอกาสมากขึ้น",
+          lesson: "การสอบตกครั้งหนึ่งไม่ได้กำหนดคุณค่าหรืออนาคตทั้งหมด",
+        },
+        {
+          label: origin.iso === "THA" ? "เข้าโรงเรียนเอกชนถ้าบ้านจ่ายไหว" : "เข้าโรงเรียนเอกชนถ้าครอบครัวรับภาระไหว",
+          sub: "ค่าเรียนและเดินทางสูงขึ้น · ลดเงินสำรองของบ้าน",
+          action: "private-school",
+          application: {
+            kind: "study",
+            threshold: 28,
+            fallbackIndex: 2,
+            subject: "สมัครเข้าโรงเรียนเอกชน",
+          },
+          delta: [-1, 1, 7, 1, -7],
+          log: "ครอบครัวลงทุนกับการเรียนในโรงเรียนเอกชน",
+          lesson: "ค่าใช้จ่ายที่สูงขึ้นควรแลกกับโอกาสที่เหมาะกับตัวเรา",
+        },
+      ],
+    },
+    {
+      age: 8,
+      icon: "family",
+      title: "เรื่องเล็กในห้องเรียนที่จำได้นาน",
+      desc: "การอยู่ร่วมกับเพื่อนและการขอความช่วยเหลือค่อยๆ สร้างความมั่นใจ คุณจะรับมือกับวันธรรมดาที่ไม่ง่ายอย่างไร?",
+      options: [
+        {
+          label: "ชวนเพื่อนที่ถูกทิ้งให้อยู่กลุ่มเดียวกัน",
+          sub: "ฝึกเห็นใจคนอื่น · สร้างเพื่อนที่ไว้ใจกัน",
+          action: "peer-support",
+          delta: [0, 4, 1, 7, 0],
+          log: "ยื่นมือชวนเพื่อนที่ถูกทิ้งให้มาร่วมกลุ่ม",
+          lesson: "ความใจดีเล็กๆ อาจเปลี่ยนวันของใครบางคนได้",
+        },
+        {
+          label: "ยอมรับว่าวิชาหนึ่งยังไม่เข้าใจ แล้วขอครูช่วย",
+          sub: "ใช้ความกล้าถาม · เพิ่มพื้นฐานระยะยาว",
+          action: "ask-teacher",
+          delta: [-1, 1, 7, 2, 0],
+          log: "ขอครูอธิบายบทเรียนที่ยังตามไม่ทัน",
+          lesson: "การถามเมื่อไม่เข้าใจเป็นทักษะ ไม่ใช่ความล้มเหลว",
+        },
+        {
+          label: "กลับบ้านไปช่วยแบ่งเบาภาระ",
+          sub: "ครอบครัวมีเวลาให้กัน · เวลาทำการบ้านลดลง",
+          action: "help-family",
+          delta: [0, 1, -1, 6, 2],
+          log: "กลับบ้านไปช่วยครอบครัวในวันที่งานยุ่ง",
+          lesson: "การดูแลกันสำคัญ และการขอให้คนอื่นช่วยเราก็สำคัญเหมือนกัน",
+        },
+      ],
+    },
+    {
+      age: 10,
+      icon: "book",
+      title: "เวลาเรียนกับหน้าที่ที่บ้านเริ่มชนกัน",
+      desc: "รายจ่ายและงานในบ้านเปลี่ยนได้เสมอ เด็กแต่ละคนจึงต้องแบ่งเวลาไม่เหมือนกัน",
+      options: [
+        {
+          label: "จัดตารางอ่านหนังสือสั้นๆ ทุกวัน",
+          sub: "ความรู้เพิ่มทีละน้อย · เวลาพักลดลงบ้าง",
+          action: "steady-study",
+          delta: [-1, -1, 6, 0, 0],
+          log: "จัดเวลาอ่านหนังสือให้สม่ำเสมอ",
+          lesson: "ความสม่ำเสมอมักพาไปได้ไกลกว่าการโหมครั้งเดียว",
+        },
+        {
+          label: "แบ่งเวลาให้เพื่อนและกิจกรรมที่ชอบ",
+          sub: "เติมความสุขและทักษะสังคม · คะแนนเรียนอาจไม่พุ่งเร็ว",
+          action: "school-club",
+          delta: [0, 6, 1, 5, 0],
+          log: "เข้าร่วมกิจกรรมกับเพื่อนหลังเลิกเรียน",
+          lesson: "ชีวิตที่ดีต้องมีทั้งความรับผิดชอบและเวลาที่เป็นของเรา",
+        },
+        {
+          label: "ช่วยงานบ้านก่อน แล้วค่อยทำการบ้านเท่าที่ไหว",
+          sub: "ครอบครัวพึ่งพาคุณ · ขอแรงสนับสนุนจากครูได้",
+          action: "family-duty",
+          delta: [-1, 0, 0, 5, 3],
+          log: "ช่วยงานครอบครัวพร้อมพยายามรักษาเวลาเรียน",
+          lesson: "ภาระของบ้านไม่ควรตกอยู่กับเด็กคนเดียว",
+        },
+      ],
+    },
+    {
+      age: 12,
+      icon: "book",
+      title: "จบประถมแล้ว จะเรียนต่อที่ไหน?",
+      desc: "การเดินทาง ค่าใช้จ่าย และผลการเรียนกำหนดทางเลือกหลัง ป.6 ไม่มีโรงเรียนแบบเดียวที่เหมาะกับทุกครอบครัว",
+      options: [
+        {
+          label: origin.iso === "THA" ? "เรียนต่อ ม.1 โรงเรียนใกล้บ้าน" : "เรียนต่อโรงเรียนมัธยมใกล้บ้าน",
+          sub: "เดินทางสะดวก · ครอบครัวช่วยดูแลได้",
+          action: "secondary-school",
+          application: { kind: "study", threshold: 30, fallbackIndex: 2, subject: "สมัครเข้าเรียนมัธยมใกล้บ้าน" },
+          delta: [0, 1, 6, 2, -2],
+          log: "สมัครเรียนต่อในโรงเรียนมัธยมใกล้บ้าน",
+          lesson: "ทางเลือกที่ไปต่อได้จริงอาจเหมาะกว่าทางที่ดูดีที่สุดบนกระดาษ",
+        },
+        {
+          label: origin.iso === "THA" ? "สอบเข้าโรงเรียนประจำจังหวัด" : "สอบเข้าโรงเรียนคัดเลือก",
+          sub: "ใช้ความรู้และเวลาเดินทางเพิ่ม · หากไม่ผ่านมีแผนสำรอง",
+          action: "competitive-secondary",
+          application: { kind: "study", threshold: 48, fallbackIndex: 0, subject: "สอบเข้าโรงเรียนคัดเลือก" },
+          delta: [-2, -1, 10, 1, -3],
+          log: "เตรียมสอบเข้าโรงเรียนที่มีการแข่งขันสูง",
+          lesson: "ความพยายามเพิ่มโอกาสได้ แต่ผลสอบไม่ได้บอกคุณค่าของคน",
+        },
+        {
+          label: "เรียนต่อพร้อมช่วยธุรกิจหรืออาชีพของครอบครัว",
+          sub: "ได้ประสบการณ์จริง · ต้องช่วยกันจัดเวลา",
+          action: "study-family-work",
+          delta: [-1, 2, 3, 6, 2],
+          log: "เรียนต่อพร้อมช่วยงานครอบครัวในเวลาว่าง",
+          lesson: "ประสบการณ์และการเรียนรู้ไปด้วยกันได้เมื่อแบ่งภาระอย่างเป็นธรรม",
+        },
+        {
+          label: "ขอเรียนทางเลือกหรือศูนย์การเรียนใกล้ชุมชน",
+          sub: "ยืดหยุ่นและประหยัดค่าเดินทาง · ต้องหมั่นเรียนด้วยตัวเอง",
+          action: "community-learning",
+          delta: [0, 1, 5, 2, 1],
+          log: "เลือกเรียนต่อผ่านศูนย์การเรียนใกล้ชุมชน",
+          lesson: "เมื่อทางหลักเข้าไม่ถึง การหาทางอื่นก็เป็นความพยายามที่มีค่า",
         },
       ],
     },
@@ -175,6 +314,15 @@ function ageEventData() {
           delta: [-1, 0, 0, 4, 8],
           log: "ออกจากโรงเรียนเพื่อเริ่มทำงานช่วยครอบครัว",
         },
+        {
+          label: "สมัครทุนเรียนต่อมัธยมต้น",
+          sub: "ใช้คะแนนและความสม่ำเสมอ · มีโรงเรียนใกล้บ้านเป็นทางสำรอง",
+          action: "academic-scholarship",
+          application: { kind: "study", skill: "study", threshold: 48, fallbackIndex: 0, subject: "สอบชิงทุนเรียนต่อ" },
+          delta: [-1, -1, 10, 1, -1],
+          log: "สอบชิงทุนเพื่อเรียนต่อมัธยมต้น",
+          lesson: "ผลสอบเปิดประตูได้ แต่ไม่ได้ตัดสินว่าใครมีคุณค่ามากกว่า",
+        },
       ],
     },
     {
@@ -214,6 +362,23 @@ function ageEventData() {
           action: "work",
           delta: [-2, 0, 0, 4, 10],
           log: "เริ่มทำงานเต็มเวลาแทนการเรียนต่อ",
+        },
+        {
+          label: "ขอทุนเรียนมัธยมปลาย",
+          sub: "เหมาะกับคนที่อยากเรียนต่อแต่ต้องคุมค่าใช้จ่าย",
+          action: "upper-school-scholarship",
+          application: { kind: "study", skill: "study", threshold: 52, fallbackIndex: 0, subject: "คัดเลือกทุนมัธยมปลาย" },
+          delta: [-1, 0, 9, 1, 2],
+          log: "สมัครทุนเพื่อเรียนมัธยมปลาย",
+          lesson: "ขอความช่วยเหลือเมื่อจำเป็นเป็นการวางแผน ไม่ใช่ความล้มเหลว",
+        },
+        {
+          label: "พักเรียนชั่วคราวและเตรียมสอบใหม่",
+          sub: "ช่วยงานที่บ้านระหว่างวางแผนกลับไปเรียน",
+          action: "gap-study",
+          delta: [-1, 1, 2, 3, 2],
+          log: "พักเรียนเพื่อช่วยที่บ้านและเตรียมโอกาสกลับไปเรียน",
+          lesson: "เส้นทางที่ช้าลงยังพาไปถึงเป้าหมายได้",
         },
       ],
     },
@@ -276,6 +441,14 @@ function ageEventData() {
           },
           delta: [1, 2, 4, 2, 5],
           log: "สมัครฝึกสายอาชีพและเริ่มเก็บทักษะทำงาน",
+        },
+        {
+          label: "ทำงานพาร์ตไทม์และเตรียมสมัครเรียน",
+          sub: "มีรายได้บางส่วน · ต้องแบ่งเวลาและเก็บเงิน",
+          action: "gap-year",
+          delta: [-1, 1, 3, 2, 5],
+          log: "ทำงานพาร์ตไทม์พร้อมเตรียมแผนเรียนต่อ",
+          lesson: "การเริ่มจากสิ่งที่ทำไหวช่วยให้เป้าหมายใหญ่จับต้องได้",
         },
       ],
     },
@@ -1590,25 +1763,67 @@ function updateChoiceSystems(event, option, choiceIndex, previousLocation) {
       if (choiceIndex === 1) abilities.practice += 3;
       if (choiceIndex === 2) abilities.study += 3;
       break;
-    case 8:
-      if (choiceIndex === 0) {
+    case 6:
+      if (option.action === "school") {
         workLife.education = "ประถมศึกษา";
         workLife.job = "นักเรียนประถม";
-      } else if (choiceIndex === 1) {
+        workLife.hours = 0;
+      } else if (option.action === "family-work") {
         workLife.job = "ช่วยงานครอบครัว";
         workLife.hours = 8;
         finances.personalIncome = 0;
       } else {
+        workLife.education = option.action === "private-school"
+          ? "ประถมศึกษา · โรงเรียนเอกชน"
+          : option.action === "scholarship-school"
+            ? "ประถมศึกษา · ทุนคัดเลือก"
+            : "เรียนรู้ในชุมชน";
+        workLife.job = option.action === "informal-school" ? "นักเรียนชุมชน" : "นักเรียนประถม";
+        workLife.hours = 0;
+        if (option.action === "private-school") finances.debt += finances.income * 0.2;
+      }
+      break;
+    case 8:
+      if (option.action === "ask-teacher") {
+        abilities.study = clamp(abilities.study + 2, 5, 98);
+        abilities.interview = clamp(abilities.interview + 1, 5, 98);
+      } else if (option.action === "peer-support") {
+        abilities.interview = clamp(abilities.interview + 3, 5, 98);
+      } else if (option.action === "help-family") {
+        abilities.practice = clamp(abilities.practice + 2, 5, 98);
+      }
+      break;
+    case 10:
+      if (option.action === "steady-study") {
+        abilities.study = clamp(abilities.study + 3, 5, 98);
+      } else if (option.action === "school-club") {
+        abilities.interview = clamp(abilities.interview + 2, 5, 98);
+        abilities.practice = clamp(abilities.practice + 1, 5, 98);
+      } else if (option.action === "family-duty") {
+        abilities.practice = clamp(abilities.practice + 2, 5, 98);
+      }
+      break;
+    case 12:
+      if (["secondary-school", "competitive-secondary"].includes(option.action)) {
+        workLife.education = origin.iso === "THA" ? "มัธยมศึกษาตอนต้น · ม.1" : "มัธยมศึกษาตอนต้น";
+        workLife.job = "นักเรียนมัธยมต้น";
+        workLife.hours = 0;
+      } else if (option.action === "study-family-work") {
+        workLife.education = origin.iso === "THA" ? "มัธยมศึกษาตอนต้น · ม.1" : "มัธยมศึกษาตอนต้น";
+        workLife.job = "นักเรียนมัธยมต้น · ช่วยงานครอบครัว";
+        workLife.hours = 8;
+      } else {
         workLife.education = "เรียนรู้ในชุมชน";
         workLife.job = "นักเรียนชุมชน";
+        workLife.hours = 0;
       }
       break;
     case 14:
-      if (choiceIndex === 0) {
+      if (option.action === "secondary-school" || option.action === "academic-scholarship") {
         workLife.education = "มัธยมศึกษาตอนต้น";
         workLife.job = "นักเรียนมัธยมต้น";
         workLife.hours = 0;
-      } else if (choiceIndex === 1) {
+      } else if (option.action === "training") {
         workLife.education = `ฝึกทักษะวิชาชีพ · ${option.application?.subject || "ทักษะงาน"}`;
         workLife.job = "ผู้ฝึกงานวัยเยาว์";
         workLife.hours = 12;
@@ -1618,14 +1833,17 @@ function updateChoiceSystems(event, option, choiceIndex, previousLocation) {
       }
       break;
     case 16:
-      if (choiceIndex === 0) {
+      if (option.action === "upper-school" || option.action === "upper-school-scholarship") {
         workLife.education = "มัธยมศึกษาตอนปลาย";
         workLife.job = "นักเรียนมัธยมปลาย";
         workLife.hours = 0;
-      } else if (choiceIndex === 1) {
+      } else if (option.action === "training") {
         workLife.education = `ประกาศนียบัตรสายอาชีพ · ${option.application?.subject || "วิชาชีพ"}`;
         workLife.job = "นักเรียนอาชีวะ";
         workLife.hours = 10;
+      } else if (option.action === "gap-study") {
+        workLife.job = "เตรียมสอบและช่วยงานครอบครัว";
+        workLife.hours = 12;
       } else {
         workLife.job = "พนักงานฝึกหัด";
         workLife.hours = 32;
@@ -1651,7 +1869,7 @@ function updateChoiceSystems(event, option, choiceIndex, previousLocation) {
         workLife.hours = 42;
         workLife.stability = 42;
         finances.personalIncome = finances.income * 0.45;
-      } else {
+      } else if (choiceIndex === 3) {
         workLife.education = "ประกาศนียบัตรสายอาชีพ";
         workLife.job = "ช่างฝึกหัด · " + current.city;
         workLife.hours = 36;
@@ -1659,6 +1877,11 @@ function updateChoiceSystems(event, option, choiceIndex, previousLocation) {
         workLife.experience = 1;
         finances.personalIncome = finances.income * 0.38;
         finances.debt += finances.income * 0.2;
+      } else {
+        workLife.job = "ทำงานชั่วคราวเพื่อเตรียมเรียนต่อ";
+        workLife.hours = 30;
+        workLife.stability = 42;
+        finances.personalIncome = finances.income * 0.3;
       }
       break;
 
@@ -2209,7 +2432,9 @@ function choose(i) {
         );
     } else if (opt.application.kind === "study") {
       resultText = `คะแนน ${scoreText} ยังไม่ถึงเกณฑ์ · `;
-      const fallbackIndex = ev.age === 18 ? (i === 0 ? 1 : 2) : 2;
+      const fallbackIndex = Number.isInteger(opt.application.fallbackIndex)
+        ? opt.application.fallbackIndex
+        : ev.age === 18 ? (i === 0 ? 1 : 2) : 2;
       const fallback = ev.options[fallbackIndex];
       selectedIndex = fallbackIndex;
       opt = {
@@ -2281,7 +2506,7 @@ function choose(i) {
     finances.personalIncome = 0;
     healthLife.stress = clamp(healthLife.stress + 5, 5, 95);
   }
-  lifeLog.push({ age: ev.age, text: opt.log });
+  lifeLog.push({ age: ev.age, text: opt.log, lesson: opt.lesson || "" });
   renderJournal();
   updatePlace();
   eventIndex++;
@@ -2293,7 +2518,8 @@ function choose(i) {
   document.getElementById("icon").innerHTML = uiIcon("compass");
   document.getElementById("eventTitle").textContent = "ทางเลือกถูกบันทึก";
   document.getElementById("eventDesc").textContent =
-    (resultText || opt.log) + " · ผลส่งต่อไปยังเงิน งาน สุขภาพ และคนใกล้ตัว";
+    (resultText || opt.log) +
+    (opt.lesson ? ` · ข้อคิด: ${opt.lesson}` : " · ผลส่งต่อไปยังเงิน งาน สุขภาพ และคนใกล้ตัว");
   document.getElementById("resume").textContent = "AUTO SIM · จำลองเวลาต่อ";
   document.getElementById("lastResult").textContent =
     "อายุ " + ev.age + " · " + opt.log;

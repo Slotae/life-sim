@@ -2700,3 +2700,163 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* A calm, consistent night blue and warm paper palette for the whole game. */
+:root {
+  --bg: #0d1422;
+  --panel: #151f31;
+  --panel2: #1b2940;
+  --stroke: #2c3a53;
+  --ink: #edf1f6;
+  --muted: #a2afc1;
+  --lime: #efc56f;
+  --mint: #72c7b0;
+  --amber: #efb869;
+  --pink: #e992a4;
+  --blue: #87bce7;
+}
+
+body {
+  background: radial-gradient(ellipse at 52% -28%, #263652 0, transparent 54%), var(--bg);
+  color: var(--ink);
+}
+
+.shell {
+  grid-template-columns: minmax(220px, .78fr) minmax(0, 2.2fr) minmax(300px, 1.03fr);
+  gap: 12px 16px;
+  width: min(100%, 1680px);
+  padding: 18px clamp(16px, 2vw, 32px) 30px;
+}
+
+.top { border-color: var(--stroke); padding-bottom: 11px; }
+.logo { color: #f0f3f7; }
+.logo em, .controls label { color: #a3b0c2; }
+.sigil { border-color: #d2ac5d; color: var(--lime); }
+.speed, .pause, .newlife {
+  min-height: 36px;
+  padding: 7px 11px;
+  border-color: var(--stroke);
+  border-radius: 7px;
+  background: #172235;
+  color: #d5dce6;
+  font-size: 11px;
+}
+.speed:hover, .pause:hover, .newlife:hover { border-color: #73839b; background: #202e45; }
+.speed.active { border-color: #8b7548; background: #332d24; color: #f4d58e; }
+.newlife { color: #f4d58e; }
+.head { padding: 4px 1px 5px; }
+.head h1 { font-size: clamp(20px, 2vw, 25px); }
+.sub { color: #a2afc1; font-size: 12px; }
+.time b { color: #f2ce83; }
+
+.activity, .right, .mini, .systemCard, .systems, .meter, .ability {
+  border-color: var(--stroke);
+  background: var(--panel);
+  box-shadow: 0 6px 20px #050a1420;
+}
+.activity { border-radius: 10px; }
+.actHead { background: #151f31; border-color: var(--stroke); min-height: 42px; padding: 9px 13px; }
+.actHead strong { font-size: 13px; }
+.actHead .uiIcon, .actTag .uiIcon { color: #f0cb78; }
+.actHead span { color: #b5c1d0; }
+.actFrame { aspect-ratio: 12 / 5.2; border-color: var(--stroke); }
+.actTag { border-color: #566174; background: #111b2be8; }
+.actTag .uiIcon { color: #f0cb78; }
+.originLine { padding: 9px 13px; border-color: var(--stroke); background: #151f31; color: #aeb9c8; }
+
+.main { gap: 12px; }
+.stats { gap: 8px; }
+.meter { padding: 11px 12px 10px; border-radius: 9px; }
+.meterRow { color: #b2bdcc; font-size: 11px; }
+.meter strong { color: #f0f2f5; font-size: 18px; }
+.bar, .track, .ability i { background: #2a3951; }
+.abilityRack { gap: 7px; }
+.ability { padding: 9px 10px; border-radius: 8px; }
+.abilityLabel { color: #b2bdcc; font-size: 10px; }
+.ability b { color: #eff2f6; font-size: 12px; }
+.footcards { gap: 8px; }
+.mini { padding: 12px; border-radius: 9px; }
+.miniHead strong { color: #e9edf3; font-size: 12px; }
+.miniHead span, .ages, .stop { color: #b0bdcc; }
+.stop { border-color: #394962; background: #202d43; color: #d6deea; }
+.detail, .lifeJournal { color: #c0cad6; font-size: 11px; line-height: 1.6; }
+.journalEntry { border-color: #2e3d55; }
+.journalEntry span { color: #f0cb78; }
+
+.right {
+  padding: 16px;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #19263b, #141e30 72%);
+}
+.rHead strong { color: #f0f3f7; font-size: 14px; }
+.rHead span, .when { color: #b6c2d0; font-size: 11px; }
+.eventIcon { border-color: #4a5870; background: #223149; color: #f0cb78; }
+.eventTitle { color: #f0f3f7; font-size: 19px; line-height: 1.35; }
+.eventDesc { color: #c0cad7; font-size: 13px; line-height: 1.65; }
+.when { margin-top: 10px; }
+.decision { margin-top: 12px; padding-top: 12px; border-color: #33425a; }
+.decision small { display: block; color: #b7c2d0; font-size: 11px; line-height: 1.5; }
+.options { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 9px; }
+.options .opt {
+  position: relative;
+  min-height: 58px;
+  grid-template-columns: 20px minmax(0, 1fr);
+  column-gap: 9px;
+  padding: 10px 12px;
+  border-color: #394963;
+  border-radius: 8px;
+  background: #1c2a40;
+  color: #f0f3f7;
+  font-size: 13px;
+  line-height: 1.45;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+.options .opt:hover, .options .opt:focus-visible {
+  border-color: #d3b16a;
+  background: #29364a;
+  color: #fff8e8;
+  outline: 2px solid #d3b16a55;
+  outline-offset: 1px;
+  transform: translateY(-1px);
+}
+.options .opt > .uiIcon { width: 17px; height: 17px; color: #f0cb78; }
+.options .opt > small { margin-top: 4px; color: #b8c5d4; font: 11px/1.55 var(--font); }
+.focusPanel { border-color: #35445b; background: #121c2d; }
+.focusHead { color: #e8edf3; }
+.focusHead span { color: #aebaca; }
+.focusChoice { min-height: 36px; border-color: #394963; background: #1c2a40; color: #d2dbe5; font-size: 11px; }
+.focusChoice.selected { border-color: #9c824e; background: #332f28; color: #f4d58e; box-shadow: inset 0 0 0 1px #806a40; }
+.resume, .bottomrow { color: #b1bdcc; font-size: 10px; }
+.auto { background: #34425a; }
+.auto i { background: #d5b66e; }
+.systems { padding: 14px; border-radius: 10px; }
+.sysTop strong { color: #eff2f6; }
+.sysCell, .systemCard { color: #e6ebf2; }
+.sysCell small, .personCell small, .factorNote { color: #aebaca; }
+.end { color: #f0f3f7; }
+.end > article { background: #151f31; }
+
+@media (max-width: 1120px) {
+  .shell { grid-template-columns: minmax(200px, .78fr) minmax(0, 2fr); gap: 12px; }
+  .right { grid-column: 1 / -1; grid-row: 4; }
+}
+@media (max-width: 720px) {
+  .shell { gap: 10px; padding: 12px; }
+  .top { flex-wrap: wrap; }
+  .controls { flex-wrap: wrap; justify-content: flex-start; }
+  .head { align-items: flex-start; }
+  .actFrame { aspect-ratio: 12 / 7; }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .options .opt { min-height: 56px; }
+  .right { padding: 14px; }
+}
+@media (max-width: 460px) {
+  .shell { padding: 10px; }
+  .controls { justify-content: flex-start; gap: 5px; }
+  .controls label { display: none; }
+  .controls button { min-height: 34px; padding: 6px 9px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footcards, .systemBoard { grid-template-columns: 1fr; }
+  .eventTitle { font-size: 17px; }
+  .eventDesc { font-size: 12px; }
+}
