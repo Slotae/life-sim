@@ -413,66 +413,148 @@
   }
 
   function drawIndoorBackground(kind, location, hour, colors, seed, season, urban, job = "") {
-    const wall = kind === "study" ? "#d9e1d1" : kind === "work" ? "#cbd9d5" : "#e6d7bf";
-    rect(0, 0, 480, 200, wall);
-    rect(0, 0, 480, 12, kind === "study" ? "#eee8d7" : "#e4e8de");
-    rect(0, 145, 480, 55, kind === "study" ? "#a88060" : "#8c7768");
-    drawWindow(location, hour, colors, seed, season, urban);
     if (kind === "study") {
-      rect(306, 28, 148, 68, "#584d52");
-      rect(312, 33, 136, 56, "#365c50");
-      rect(325, 44, 86, 3, "#e8e1bf");
-      rect(325, 57, 102, 3, "#d7d7b4");
-      rect(325, 70, 70, 3, "#e8e1bf");
-      rect(338, 102, 112, 7, "#bd9369");
-      rect(344, 109, 7, 36, "#755c4e");
-      rect(438, 109, 7, 36, "#755c4e");
-      rect(362, 88, 42, 14, "#e8d9ad");
-      rect(369, 83, 29, 7, "#76929b");
-      // Small bookcase and classroom supplies add context without covering the view.
-      rect(24, 112, 65, 33, "#8a6349");
-      rect(29, 119, 55, 4, "#d6b27b");
-      rect(34, 124, 7, 16, "#8199a0");
-      rect(44, 126, 6, 14, "#cf9076");
-      rect(56, 122, 8, 18, "#e1cb91");
-    } else if (kind === "work") {
-      const medical = /แพทย์|พยาบาล|สุขภาพ|หมอ/.test(job);
-      const handsOn = /ช่าง|เกษตร|ก่อสร้าง|ครัว|อาหาร|ฝึก/.test(job);
-      rect(318, 28, 146, 70, medical ? "#789a95" : handsOn ? "#795f4b" : "#7c8c8b");
-      rect(325, 35, 132, 56, medical ? "#dce8df" : handsOn ? "#ae916a" : "#cad2c5");
-      if (medical) {
-        rect(380, 45, 19, 7, "#bd6f71");
-        rect(386, 39, 7, 19, "#bd6f71");
-        rect(342, 63, 92, 3, "#aabbb2");
-        rect(349, 73, 72, 3, "#aabbb2");
-        rect(30, 111, 61, 34, "#83aaa0");
-      } else if (handsOn) {
-        rect(347, 45, 91, 8, "#4c5552");
-        rect(356, 56, 9, 28, "#c78b57");
-        rect(385, 56, 12, 29, "#929e98");
-        rect(418, 56, 8, 29, "#d1ae69");
-        rect(30, 112, 61, 33, "#987a57");
-      } else {
-        for (let i = 0; i < 6; i++) {
-          rect(337 + i * 19, 45, 12, 39, i % 2 ? "#759092" : "#94a49a");
-          rect(340 + i * 19, 52, 3, 5, "#f0d18e");
-          rect(346 + i * 19, 63, 3, 5, "#f0d18e");
-        }
-        rect(30, 111, 61, 34, "#778f76");
-      }
-      rect(37, 103, 48, 9, "#91a880");
-      rect(54, 122, 19, 23, "#a07f61");
-    } else {
-      rect(321, 31, 132, 5, "#8d715f");
-      rect(335, 40, 49, 23, "#e5d6b6");
-      rect(389, 40, 50, 23, "#c78479");
-      rect(321, 67, 132, 4, "#8d715f");
-      rect(331, 75, 29, 20, "#6f8c82");
-      rect(367, 75, 36, 20, "#c2ab7e");
-      rect(411, 75, 31, 20, "#7a899c");
-      rect(30, 82, 49, 16, "#d3b77c");
-      rect(36, 74, 37, 9, "#e2c98d");
+      // A complete Thai classroom: green board, wall fan, desk rows and a small view outside.
+      rect(0, 0, 480, 200, "#d9d7c6");
+      rect(0, 0, 480, 17, "#f1e7d0");
+      rect(0, 142, 480, 58, "#98725a");
+      rect(0, 146, 480, 4, "#c5a37d");
+      rect(21, 27, 87, 81, "#354359");
+      rect(27, 33, 75, 69, "#93c4cf");
+      context.save();
+      context.beginPath();
+      context.rect(29, 35, 71, 65);
+      context.clip();
+      drawThaiLocation(location, hour, colors, seed, season, urban);
+      context.restore();
+      rect(119, 26, 295, 86, "#5d594e");
+      rect(125, 32, 283, 74, "#2e5148");
+      rect(146, 51, 88, 4, "#e3dbb4");
+      rect(146, 65, 116, 3, "#c7d0a8");
+      rect(146, 78, 68, 3, "#e3dbb4");
+      rect(287, 48, 91, 3, "#c7d0a8");
+      rect(287, 63, 72, 3, "#e3dbb4");
+      rect(26, 118, 80, 22, "#815a42");
+      rect(34, 111, 64, 8, "#d0ac70");
+      rect(42, 123, 11, 12, "#76949a");
+      rect(60, 121, 12, 14, "#d59a72");
+      rect(82, 120, 9, 15, "#e1cd91");
+      rect(425, 29, 29, 29, "#a7a696");
+      rect(431, 35, 17, 17, "#73868b");
+      rect(437, 17, 5, 12, "#747d7c");
+      rect(421, 57, 38, 4, "#8c8979");
+      rect(0, 169, 480, 4, "#714f43");
+      rect(17, 176, 98, 5, "#b28a63");
+      rect(335, 176, 123, 5, "#b28a63");
+      return;
     }
+
+    if (kind === "work") {
+      const medical = /แพทย์|พยาบาล|สุขภาพ|หมอ/.test(job);
+      const farm = /เกษตร|สวน|ฟาร์ม/.test(job);
+      const handsOn = /ช่าง|ก่อสร้าง|ครัว|อาหาร|ฝึก/.test(job);
+      const service = /บริการ|ร้าน|ขาย|โรงแรม|พนักงาน/.test(job);
+      if (farm) {
+        drawThaiLocation(location, hour, colors, seed, season, false);
+        rect(0, 134, 480, 66, "#78984c");
+        for (let x = 0; x < 480; x += 31) {
+          rect(x, 143, 2, 45, "#c9ce76");
+          rect(x + 13, 151, 2, 38, "#d3ce7b");
+        }
+        rect(30, 56, 103, 69, "#a8754e");
+        rect(20, 49, 123, 11, "#754c46");
+        rect(40, 65, 79, 8, "#c28d59");
+        rect(48, 79, 11, 45, "#694b3c");
+        rect(104, 79, 11, 45, "#694b3c");
+        rect(365, 116, 68, 25, "#9b6b4a");
+        rect(371, 109, 55, 9, "#d5ae71");
+        for (let x = 377; x < 423; x += 14) rect(x, 119, 5, 18, "#d9b375");
+        return;
+      }
+
+      const wall = medical ? "#d7e5dc" : handsOn ? "#d4c5a9" : service ? "#d8cba9" : "#c7d6d2";
+      rect(0, 0, 480, 200, wall);
+      rect(0, 0, 480, 16, medical ? "#edf2e6" : "#e7ddc6");
+      rect(0, 144, 480, 56, medical ? "#7d9c8e" : handsOn ? "#765c4b" : service ? "#956c4f" : "#75665c");
+      if (medical) {
+        rect(26, 29, 127, 77, "#becfc7");
+        rect(32, 35, 115, 65, "#edf3e7");
+        rect(82, 54, 19, 7, "#c16d75");
+        rect(88, 48, 7, 19, "#c16d75");
+        rect(192, 77, 196, 51, "#cbd7cf");
+        rect(203, 69, 164, 18, "#f0eee2");
+        rect(211, 86, 9, 41, "#819d91");
+        rect(351, 86, 9, 41, "#819d91");
+        rect(39, 120, 94, 10, "#8e6b51");
+        rect(47, 130, 9, 19, "#68594b");
+        rect(115, 130, 9, 19, "#68594b");
+        rect(414, 45, 30, 76, "#95b0a4");
+        rect(420, 52, 18, 21, "#f0f0df");
+      } else if (handsOn) {
+        rect(26, 26, 172, 92, "#796953");
+        rect(33, 33, 158, 78, "#ad976d");
+        rect(50, 48, 116, 7, "#4a5151");
+        for (let x = 59; x < 171; x += 28) {
+          rect(x, 57, 9, 39, x % 2 ? "#d29b5e" : "#89958d");
+          rect(x + 3, 66, 3, 19, "#554f48");
+        }
+        rect(280, 75, 153, 54, "#8b6547");
+        rect(270, 68, 174, 10, "#c59866");
+        rect(290, 129, 11, 25, "#594d44");
+        rect(416, 129, 11, 25, "#594d44");
+        rect(315, 50, 74, 16, "#ba7957");
+        rect(324, 53, 57, 4, "#e4c28c");
+      } else if (service) {
+        rect(28, 27, 142, 91, "#846349");
+        rect(35, 34, 128, 77, "#e6d6b4");
+        for (let y = 47; y < 100; y += 24) {
+          rect(41, y, 116, 4, "#a37a56");
+          rect(51, y - 12, 14, 12, "#c78267");
+          rect(76, y - 15, 19, 15, "#7e9f88");
+          rect(107, y - 13, 17, 13, "#d0ad6c");
+          rect(134, y - 14, 14, 14, "#8098a4");
+        }
+        rect(214, 91, 225, 48, "#9b6c50");
+        rect(204, 82, 245, 12, "#dab77d");
+        rect(230, 105, 30, 22, "#d5aa69");
+        rect(270, 103, 45, 24, "#76988c");
+        rect(332, 104, 38, 23, "#c57c62");
+      } else {
+        rect(22, 25, 436, 98, "#aab9b5");
+        rect(29, 32, 422, 84, "#d8e1d6");
+        rect(42, 45, 65, 57, "#6e8fa3");
+        rect(48, 51, 53, 45, hour > 19 ? "#374761" : "#9cc4c5");
+        rect(125, 45, 44, 58, "#c2b38d");
+        rect(187, 45, 44, 58, "#c2b38d");
+        rect(249, 45, 44, 58, "#c2b38d");
+        rect(311, 45, 44, 58, "#c2b38d");
+        rect(373, 45, 44, 58, "#c2b38d");
+        for (let x = 133; x < 415; x += 62) {
+          rect(x, 53, 28, 4, "#edf0e1");
+          rect(x, 65, 20, 4, "#edf0e1");
+          rect(x, 78, 32, 4, "#edf0e1");
+        }
+        rect(37, 127, 406, 12, "#685a50");
+        rect(51, 138, 12, 20, "#4d4d51");
+        rect(417, 138, 12, 20, "#4d4d51");
+      }
+      rect(0, 158, 480, 4, "#d4b27c");
+      return;
+    }
+
+    rect(0, 0, 480, 200, "#e6d7bf");
+    rect(0, 0, 480, 12, "#e4e8de");
+    rect(0, 145, 480, 55, "#8c7768");
+    drawWindow(location, hour, colors, seed, season, urban);
+    rect(321, 31, 132, 5, "#8d715f");
+    rect(335, 40, 49, 23, "#e5d6b6");
+    rect(389, 40, 50, 23, "#c78479");
+    rect(321, 67, 132, 4, "#8d715f");
+    rect(331, 75, 29, 20, "#6f8c82");
+    rect(367, 75, 36, 20, "#c2ab7e");
+    rect(411, 75, 31, 20, "#7a899c");
+    rect(30, 82, 49, 16, "#d3b77c");
+    rect(36, 74, 37, 9, "#e2c98d");
   }
 
   function drawOutside(kind, location, hour, colors, seed, season, urban) {
@@ -506,6 +588,26 @@
     rect(371, 128, 9, 5, "#d39b69");
     rect(400, 91, 41, 15, "#d09a67");
     rect(410, 84, 20, 7, "#91a56b");
+    // Rice cooker, jars and hanging utensils make this a lived-in Thai kitchen.
+    rect(34, 28, 116, 72, "#927353");
+    rect(40, 34, 104, 60, "#c9a675");
+    for (let y = 43; y < 87; y += 21) {
+      rect(44, y, 96, 3, "#795b48");
+      rect(53, y - 11, 15, 10, "#c77c5f");
+      rect(78, y - 14, 20, 13, "#e4d2a5");
+      rect(108, y - 12, 17, 11, "#779682");
+    }
+    rect(383, 116, 44, 28, "#e4e4d8");
+    rect(389, 111, 32, 7, "#faf2dc");
+    rect(396, 120, 17, 3, "#8c9b94");
+    rect(396, 132, 18, 3, "#bd7466");
+    rect(300, 52, 4, 38, "#70594a");
+    rect(293, 83, 18, 6, "#b2a080");
+    rect(326, 54, 4, 35, "#70594a");
+    rect(319, 82, 18, 6, "#b2a080");
+    rect(348, 49, 6, 16, "#806c56");
+    rect(341, 64, 20, 5, "#c0a77a");
+    for (let x = 12; x < 480; x += 42) rect(x, 161, 2, 33, "#9c7960");
   }
 
   function drawLivingRoomScene(location, hour, colors, seed, season, urban) {
@@ -525,6 +627,22 @@
     rect(40, 114, 9, 31, "#795a45");
     rect(28, 104, 32, 12, "#8cad77");
     rect(31, 94, 25, 10, "#7b9b68");
+    // Family photo, curtains, cushions and a tea tray make this Thai home feel lived in.
+    rect(350, 30, 53, 44, "#8a674e");
+    rect(355, 35, 43, 34, "#e1c999");
+    rect(359, 39, 35, 26, "#91b7b7");
+    rect(360, 53, 33, 12, "#72875f");
+    rect(369, 46, 7, 8, "#bd806b");
+    rect(380, 43, 7, 10, "#58617b");
+    rect(24, 37, 14, 59, "#bc8065");
+    rect(64, 37, 14, 59, "#bc8065");
+    rect(31, 39, 40, 8, "#d9b17a");
+    rect(298, 122, 29, 12, "#d5a274");
+    rect(385, 122, 27, 12, "#d5a274");
+    rect(178, 136, 36, 6, "#845a43");
+    rect(184, 132, 9, 5, "#e2d2b2");
+    rect(198, 132, 9, 5, "#d99070");
+    for (let x = 12; x < 480; x += 48) rect(x, 181, 2, 19, "#9a7966");
   }
 
   function drawBedroomScene(location, hour, colors, seed, season, urban) {
@@ -544,6 +662,20 @@
     rect(228, 129, 23, 5, "#e9dfc4");
     rect(43, 115, 8, 30, "#745b48");
     rect(31, 106, 32, 11, "#90aa78");
+    // Patchwork quilt, bedside lamp, books and slippers make this room read as a bedroom.
+    rect(295, 113, 132, 8, "#81989c");
+    for (let x = 298; x < 420; x += 18) {
+      rect(x, 121, 12, 7, x % 2 ? "#d5bd87" : "#a9b5a0");
+      rect(x + 5, 130, 10, 7, x % 3 ? "#b88070" : "#81989c");
+    }
+    rect(226, 107, 24, 20, "#7e5e47");
+    rect(231, 99, 14, 9, "#e6cc84");
+    rect(235, 104, 6, 5, "#fff0bc");
+    rect(294, 157, 19, 5, "#b98968");
+    rect(319, 157, 19, 5, "#b98968");
+    rect(360, 83, 56, 15, "#a98c70");
+    rect(366, 86, 44, 8, "#e4dac3");
+    for (let x = 15; x < 480; x += 48) rect(x, 183, 2, 17, "#938071");
   }
 
   function drawTravelScene(location, hour, colors, seed, urban) {
@@ -568,6 +700,17 @@
     rect(380, 156, 23, 8, "#343a42");
     rect(188, 144, 26, 28, "#78624f");
     rect(192, 149, 18, 12, "#c28c60");
+    rect(74, 31, 108, 20, "#e4d7b7");
+    rect(80, 35, 96, 3, "#6d8390");
+    rect(80, 42, 73, 3, "#9a8e78");
+    rect(78, 58, 74, 34, "#897357");
+    rect(82, 62, 66, 26, "#b89b70");
+    rect(92, 67, 9, 13, "#d7b66e");
+    rect(109, 64, 11, 16, "#78928a");
+    rect(127, 68, 13, 12, "#c98567");
+    for (let x = 10; x < 480; x += 42) rect(x, 183, 20, 3, "#e1c78d");
+    rect(40, 104, 6, 3, "#e4c978");
+    rect(178, 104, 6, 3, "#e4c978");
   }
 
   function drawCareScene(location, hour, colors, seed, season, urban) {
@@ -587,7 +730,9 @@
     rect(411, 142, 9, 14, "#758b83");
   }
 
-  function sceneForEvent(age) {
+  function sceneForEvent(event) {
+    if (typeof event === "object" && event?.scene) return event.scene;
+    const age = typeof event === "number" ? event : event?.age || 0;
     if (age <= 5) return "childhood";
     if (age <= 16) return age === 8 ? "school" : "learning";
     if (age <= 24) return "new-start";
@@ -599,7 +744,77 @@
 
   function drawEventScene(scene, state, hour, colors, seed, season) {
     const { location, urban } = state;
-    if (scene === "childhood" || scene === "retirement") {
+    if (scene === "songkran") {
+      drawThaiLocation(location, hour, colors, seed, season, urban);
+      // A neighborhood Songkran: shade cloth, water bowls and a shared street table.
+      rect(0, 120, 480, 80, "#bc9a70");
+      rect(18, 50, 176, 8, "#8b594c");
+      rect(23, 58, 164, 30, "#e5c17b");
+      rect(43, 88, 7, 32, "#785842");
+      rect(165, 88, 7, 32, "#785842");
+      rect(58, 76, 20, 19, "#d0a46d");
+      rect(62, 70, 12, 7, "#f0ead1");
+      rect(94, 75, 23, 20, "#7897a3");
+      rect(99, 69, 13, 7, "#e3d9c3");
+      rect(286, 130, 45, 31, "#6c99a4");
+      rect(291, 124, 35, 9, "#d6e6db");
+      rect(348, 125, 45, 36, "#7099a2");
+      rect(354, 119, 33, 9, "#d6e6db");
+      for (let i = 0; i < 6; i++) {
+        rect(202 + i * 12, 32 + (i % 2) * 8, 5, 7, i % 2 ? "#e4a878" : "#e8d18d");
+      }
+      rect(336, 151, 9, 4, "#c8e8ef");
+      rect(321, 143, 7, 4, "#c8e8ef");
+      rect(400, 162, 9, 4, "#c8e8ef");
+    } else if (scene === "wai-khru") {
+      drawIndoorBackground("study", location, hour, colors, seed, season, urban);
+      rect(286, 27, 161, 58, "#38594d");
+      rect(294, 34, 145, 45, "#29473e");
+      rect(309, 48, 79, 3, "#eadfb8");
+      rect(309, 59, 111, 3, "#d4dbbe");
+      rect(42, 134, 395, 14, "#9b7253");
+      rect(58, 148, 12, 34, "#65544a");
+      rect(408, 148, 12, 34, "#65544a");
+      rect(93, 125, 43, 9, "#e7dcc5");
+      rect(153, 119, 15, 15, "#a85e59");
+      rect(157, 112, 7, 8, "#e9cf88");
+      rect(174, 115, 7, 19, "#648d68");
+      rect(169, 118, 17, 5, "#d9bd78");
+      rect(269, 125, 43, 9, "#e7dcc5");
+      rect(320, 119, 15, 15, "#a85e59");
+      rect(324, 112, 7, 8, "#e9cf88");
+      rect(341, 115, 7, 19, "#648d68");
+      rect(336, 118, 17, 5, "#d9bd78");
+      state.seated = false;
+    } else if (scene === "loy-krathong") {
+      rect(0, 0, 480, 200, "#26334d");
+      rect(0, 0, 480, 63, "#202b43");
+      rect(45, 24, 19, 19, "#f4e8be");
+      rect(67, 30, 8, 8, "#f4e8be");
+      rect(0, 94, 480, 24, "#4d5c70");
+      for (let x = 0; x < 480; x += 49) {
+        rect(x + 6, 70 + (x % 3) * 4, 25, 28, x % 2 ? "#596675" : "#66737b");
+        rect(x + 12, 77 + (x % 2) * 5, 4, 5, "#edc778");
+      }
+      rect(0, 119, 480, 81, "#315d6b");
+      for (let x = 8; x < 480; x += 32) {
+        rect(x, 126 + (x % 3) * 5, 13, 2, "#63949a");
+      }
+      // Banana-leaf krathongs and small candle reflections float on the water.
+      for (const x of [78, 182, 298, 405]) {
+        rect(x, 129 + (x % 2) * 6, 26, 5, "#d4a663");
+        rect(x + 3, 125 + (x % 2) * 6, 19, 5, "#6d9a63");
+        rect(x + 12, 120 + (x % 2) * 6, 3, 5, "#f5d78e");
+        rect(x + 13, 117 + (x % 2) * 6, 2, 3, "#f0ae70");
+        rect(x + 11, 140 + (x % 2) * 6, 4, 16, "#e2bf72");
+      }
+      if (location?.city === "เชียงใหม่") {
+        for (const x of [109, 233, 359]) {
+          rect(x, 41, 5, 12, "#d2a86c");
+          rect(x + 2, 36, 3, 5, "#f0d18b");
+        }
+      }
+    } else if (scene === "childhood" || scene === "retirement") {
       if (urban) drawSkyline(location, hour, colors, seed);
       else drawCozyVillage(location, hour, colors, seed, season);
       rect(28, 141, 88, 8, "#8a674d");
@@ -619,14 +834,27 @@
       rect(394, 163, 8, 33, "#69574c");
       rect(105, 142, 47, 10, "#eee1bd");
       rect(293, 142, 45, 10, "#eee1bd");
+      state.seated = true;
     } else if (scene === "work" || scene === "new-start") {
-      drawIndoorBackground("work", location, hour, colors, seed, season, urban, state.job);
-      rect(73, 150, 338, 12, "#795e50");
-      rect(85, 162, 10, 34, "#514b48");
-      rect(390, 162, 10, 34, "#514b48");
-      rect(126, 130, 70, 19, "#e2d6ba");
-      rect(135, 123, 49, 7, "#869d9d");
-      rect(306, 136, 56, 13, "#ba8c65");
+      const studying = /นักเรียน|นักศึกษา/.test(state.job || "");
+      if (scene === "new-start" && studying) {
+        drawIndoorBackground("study", location, hour, colors, seed, season, urban);
+        rect(58, 149, 364, 11, "#997054");
+        rect(72, 160, 9, 34, "#69574c");
+        rect(398, 160, 9, 34, "#69574c");
+        rect(114, 138, 53, 10, "#eee1bd");
+        rect(302, 138, 51, 10, "#eee1bd");
+        state.seated = true;
+      } else {
+        drawIndoorBackground("work", location, hour, colors, seed, season, urban, state.job);
+        rect(73, 150, 338, 12, "#795e50");
+        rect(85, 162, 10, 34, "#514b48");
+        rect(390, 162, 10, 34, "#514b48");
+        rect(126, 130, 70, 19, "#e2d6ba");
+        rect(135, 123, 49, 7, "#869d9d");
+        rect(306, 136, 56, 13, "#ba8c65");
+        state.seated = /พนักงาน|นักบัญชี|เจ้าหน้าที่|ประสานงาน/.test(state.job || "");
+      }
     } else if (scene === "travel") {
       drawTravelScene(location, hour, colors, seed, urban);
     } else if (scene === "care") {
@@ -860,7 +1088,7 @@
     const season = Math.floor(((state.age || 0) % 1) * 4);
     const kind = activity.kind;
     const urban = state.urban === true;
-    const eventScene = state.event ? sceneForEvent(state.event.age) : null;
+    const eventScene = state.event ? sceneForEvent(state.event) : null;
     if (eventScene) {
       drawEventScene(eventScene, state, hour, colors, seed, season);
     } else if (kind === "study") {

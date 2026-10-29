@@ -59,6 +59,8 @@ let speed = 0.125,
 let abilities = null;
 let characterLook = null;
 let birthLife = null;
+let choiceActivity = null;
+let choiceActivityUntil = 0;
 function pick(exclude = [], source = places) {
   const pool = source.filter((place) => !exclude.includes(place.city));
   return pool[Math.floor(Math.random() * pool.length)] || source[0];
@@ -83,7 +85,7 @@ function ageEventData() {
     workCity.city,
   ]);
 
-  return [
+  const schedule = [
     {
       age: 5,
       icon: "home",
@@ -889,6 +891,102 @@ function ageEventData() {
       ],
     },
   ];
+  const thaiMoments = [
+    {
+      age: 7,
+      icon: "family",
+      scene: "songkran",
+      title: "สงกรานต์กับคนในบ้าน",
+      desc: "ช่วงปิดเทอม ญาติชวนกลับไปหาผู้ใหญ่ที่บ้าน มีทั้งรดน้ำขอพร เล่นน้ำหน้าซอย และช่วยเตรียมกับข้าว คุณอยากใช้วันหยุดแบบไหน?",
+      options: [
+        {
+          label: "ไปหาผู้ใหญ่และช่วยจัดโต๊ะอาหาร",
+          sub: "อยู่กับครอบครัว · เรียนรู้การดูแลกัน",
+          action: "family-time",
+          delta: [1, 5, 1, 8, -1],
+          log: "ใช้วันสงกรานต์ไปหาผู้ใหญ่และช่วยเตรียมอาหาร",
+          lesson: "การกลับไปใช้เวลาด้วยกันมีค่ากว่าของฝากราคาแพง",
+        },
+        {
+          label: "เล่นน้ำกับเพื่อนบ้านแล้วช่วยเก็บขยะ",
+          sub: "สนุกกับเพื่อน · รับผิดชอบพื้นที่ร่วมกัน",
+          action: "child-social",
+          delta: [2, 8, 0, 5, 0],
+          log: "เล่นน้ำสงกรานต์กับเพื่อนบ้านและช่วยกันเก็บพื้นที่",
+          lesson: "ความสนุกในชุมชนไปด้วยกันได้กับการดูแลพื้นที่ส่วนรวม",
+        },
+        {
+          label: "ช่วยญาติขายน้ำและของกินหน้าบ้าน",
+          sub: "ได้เรียนรู้การค้าขาย · เหนื่อยและพลาดเวลาเล่น",
+          action: "help-family",
+          delta: [-1, 2, 2, 3, 4],
+          log: "ช่วยญาติขายเครื่องดื่มและอาหารในช่วงสงกรานต์",
+          lesson: "งานเล็ก ๆ สอนให้เห็นทั้งแรงงานและรายได้ของครอบครัว",
+        },
+      ],
+    },
+    {
+      age: 13,
+      icon: "book",
+      scene: "wai-khru",
+      title: "วันไหว้ครูที่โรงเรียน",
+      desc: "ห้องเรียนช่วยกันจัดพานดอกไม้ก่อนพิธี เพื่อนชวนคุณลงแรงทำพานและขึ้นไปกล่าวขอบคุณครู แต่ช่วงบ่ายยังมีงานที่บ้านรออยู่",
+      options: [
+        {
+          label: "ช่วยเพื่อนทำพานและร่วมพิธี",
+          sub: "ฝึกทำงานเป็นทีม · ใช้เวลาหลังเลิกเรียน",
+          action: "school-club",
+          delta: [0, 4, 3, 6, 0],
+          log: "ช่วยเพื่อนทำพานดอกไม้และร่วมพิธีไหว้ครู",
+          lesson: "การขอบคุณครูยังเป็นเรื่องของการลงมือเรียนรู้และดูแลกันทุกวัน",
+        },
+        {
+          label: "กลับบ้านไปช่วยดูแลน้อง",
+          sub: "รับผิดชอบที่บ้าน · พลาดกิจกรรมกับเพื่อน",
+          action: "family-time",
+          delta: [0, 1, 1, 5, 0],
+          log: "กลับบ้านหลังเลิกเรียนเพื่อช่วยดูแลน้อง",
+          lesson: "บางวันความรับผิดชอบในบ้านมาก่อนกิจกรรมที่โรงเรียน",
+        },
+      ],
+    },
+    {
+      age: 20,
+      icon: "family",
+      scene: "loy-krathong",
+      title: home.city === "เชียงใหม่" ? "คืนยี่เป็งริมแม่น้ำปิง" : "คืนลอยกระทง",
+      desc: home.city === "เชียงใหม่"
+        ? "หลังเลิกเรียนหรือเลิกงาน เพื่อนชวนไปดูโคมและงานยี่เป็งริมแม่น้ำปิง คุณจะใช้เวลาคืนนี้อย่างไร?"
+        : "คืนวันเพ็ญ เพื่อนชวนไปริมแม่น้ำ มีทั้งกระทงทำจากวัสดุธรรมชาติ ร้านอาหาร และคนที่มาช่วยกันดูแลริมน้ำ",
+      options: [
+        {
+          label: "ทำกระทงจากวัสดุธรรมชาติไปกับครอบครัว",
+          sub: "รักษาธรรมเนียม · ใช้เวลาและค่าเดินทาง",
+          action: "family-time",
+          delta: [0, 7, 1, 7, -2],
+          log: "ทำกระทงจากวัสดุธรรมชาติและไปงานกับครอบครัว",
+          lesson: "ประเพณีมีความหมายขึ้นเมื่อเราคิดถึงทั้งผู้คนและแม่น้ำที่ใช้ร่วมกัน",
+        },
+        {
+          label: "ไปช่วยเก็บขยะหลังงาน",
+          sub: "ได้รู้จักชุมชน · ใช้เวลาช่วงกลางคืน",
+          action: "volunteer",
+          delta: [-1, 4, 2, 6, 0],
+          log: "ช่วยอาสาเก็บขยะและดูแลพื้นที่ริมน้ำหลังงาน",
+          lesson: "การรักษาประเพณีรวมถึงการรับผิดชอบผลกระทบที่เกิดขึ้นด้วย",
+        },
+        {
+          label: "อยู่ทำงานพิเศษที่ร้านอาหาร",
+          sub: "เก็บเงินเพิ่ม · พลาดเวลาร่วมงาน",
+          action: "part-time",
+          delta: [-2, -1, 1, 0, 5],
+          log: "รับงานพิเศษในคืนเทศกาลเพื่อเพิ่มเงินเก็บ",
+          lesson: "โอกาสและรายได้สำคัญ แต่การพักและเจอคนใกล้ตัวก็มีต้นทุน",
+        },
+      ],
+    },
+  ];
+  return schedule.concat(thaiMoments).sort((a, b) => a.age - b.age);
 }
 let events = [];
 
@@ -1029,6 +1127,38 @@ function scheduledActivity() {
   return { name: "ผ่อนคลายก่อนเข้านอน", kind: "rest" };
 }
 
+function activityAfterChoice(option) {
+  const action = option.action || "";
+  if (action === "stay" && /นักเรียน|นักศึกษา/.test(workLife?.job || "")) {
+    return { name: "เริ่มต้นเส้นทางการเรียน", kind: "study" };
+  }
+  if (["travel", "move", "return"].includes(action)) {
+    return { name: "ออกเดินทางไปยังสถานที่ใหม่", kind: "travel" };
+  }
+  if (["school", "family-work", "informal-school", "scholarship-school", "private-school", "secondary-school", "competitive-secondary", "study-family-work", "community-learning", "academic-scholarship", "upper-school", "upper-school-scholarship", "gap-study"].includes(action)) {
+    return { name: "เริ่มต้นเส้นทางการเรียน", kind: "study" };
+  }
+  if (["child-social", "child-home", "child-hobby", "peer-support", "school-club", "family-time", "children", "care-plan", "community", "help-family"].includes(action)) {
+    return { name: "ใช้เวลากับคนสำคัญ", kind: "family" };
+  }
+  if (["health-break", "retire", "rest"].includes(action)) {
+    return { name: "พักและดูแลตัวเอง", kind: "rest" };
+  }
+  if (["exercise", "sports"].includes(action)) {
+    return { name: "ออกกำลังกาย", kind: "exercise" };
+  }
+  if (["work", "training", "internship", "promotion", "business", "career-change", "part-time", "volunteer"].includes(action)) {
+    return { name: "เริ่มทำงานตามเส้นทางที่เลือก", kind: "work" };
+  }
+  return scheduledActivity();
+}
+
+function visibleActivity() {
+  return choiceActivity && simulationMinutes < choiceActivityUntil
+    ? choiceActivity
+    : scheduledActivity();
+}
+
 document.querySelectorAll(".speed").forEach(
   (b) =>
     (b.onclick = () => {
@@ -1066,7 +1196,7 @@ function showSystem(tab, button) {
   renderSystems();
 }
 function updateActivityLabel(force) {
-  const a = scheduledActivity();
+  const a = visibleActivity();
   const activityIcons = {
     rest: "sun",
     home: "home",
@@ -1140,12 +1270,28 @@ function updatePlace() {
 function renderJournal() {
   const journal = document.getElementById("lifeJournal");
   if (!journal) return;
-  const recentEvents = lifeLog.slice(-3).reverse();
+  const recentEvents = lifeLog.slice().reverse();
+  const count = document.getElementById("journalCount");
+  const preview = document.getElementById("journalPreview");
+  if (count) count.textContent = `${lifeLog.length} เหตุการณ์สำคัญ`;
+  if (preview) preview.textContent = lifeLog.at(-1)?.text || "จุดเริ่มต้นของชีวิต";
+  const statNames = ["สุขภาพ", "ความสุข", "ความรู้", "คนใกล้ตัว", "เงินเก็บ"];
   journal.innerHTML = recentEvents.length
     ? recentEvents
         .map(
-          (entry) =>
-            `<div class="journalEntry"><span>อายุ ${entry.age}</span><b>${escapeHtml(entry.text)}</b></div>`,
+          (entry) => {
+            const impacts = Array.isArray(entry.delta)
+              ? entry.delta
+                  .map((value, index) => ({ value, name: statNames[index] }))
+                  .filter((change) => change.value)
+                  .map(
+                    (change) =>
+                      `<span class="journalImpact ${change.value > 0 ? "up" : "down"}">${change.name} ${change.value > 0 ? "+" : ""}${change.value}</span>`,
+                  )
+                  .join("")
+              : "";
+            return `<article class="journalEntry"><span class="journalAge">อายุ ${entry.age} · ${escapeHtml(entry.place || current.city)}</span><b>${escapeHtml(entry.text)}</b>${entry.lesson ? `<p class="journalLesson">${escapeHtml(entry.lesson)}</p>` : ""}${impacts ? `<div class="journalImpacts">${impacts}</div>` : ""}</article>`;
+          },
         )
         .join("")
     : '<div class="journalEmpty">การเลือกสำคัญจะเก็บไว้ที่นี่</div>';
@@ -2329,6 +2475,8 @@ function restart() {
   eventIndex = 0;
   factorAge = 0;
   lifeLog = [];
+  choiceActivity = null;
+  choiceActivityUntil = 0;
   origin = pickThai();
   current = origin;
   home = origin;
@@ -2474,7 +2622,15 @@ function choose(i) {
     finances.personalIncome = 0;
     healthLife.stress = clamp(healthLife.stress + 5, 5, 95);
   }
-  lifeLog.push({ age: ev.age, text: opt.log, lesson: opt.lesson || "" });
+  lifeLog.push({
+    age: ev.age,
+    text: opt.log,
+    lesson: opt.lesson || "",
+    delta: opt.delta.slice(),
+    place: opt.dest?.city || current.city,
+  });
+  choiceActivity = activityAfterChoice(opt);
+  choiceActivityUntil = simulationMinutes + 180;
   renderJournal();
   updatePlace();
   eventIndex++;
@@ -2529,11 +2685,11 @@ function tick(now) {
 restart();
 requestAnimationFrame(tick);
 function drawActivity(timestamp) {
-  const currentActivity = scheduledActivity();
+  const currentActivity = visibleActivity();
   updateActivityLabel(false);
   LifeScene.draw(timestamp, {
     activity: currentActivity,
-    event: activeEvent ? { age: activeEvent.age } : null,
+    event: activeEvent ? { age: activeEvent.age, scene: activeEvent.scene } : null,
     age,
     location: current,
     family: familyLife,
